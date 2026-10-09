@@ -860,12 +860,12 @@ export default function Home() {
             </div>
 
             {/* RIGHT IMAGE */}
-            <div className="md:col-span-7 relative">
-              {/* IMAGE (UNCHANGED RATIO) */}
+            <div className="md:col-span-7 relative min-h-[320px] md:min-h-0">
+              {/* IMAGE: matches the left content height on desktop */}
               <img
                 src={aboutFactory}
                 alt="DFAB Factory"
-                className="rounded-2xl w-full h-full object-cover shadow-3xl"
+                className="rounded-2xl w-full h-[320px] md:absolute md:inset-0 md:h-full object-cover object-center shadow-3xl"
               />
 
               {/* 8+ BADGE (OUTSIDE LEFT BOTTOM) */}
