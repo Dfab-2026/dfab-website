@@ -13,8 +13,9 @@ import {
   X,
 } from "lucide-react";
 import axios from "axios";
+import { getProjectsApiBase, normalizeProjects } from "../utils/projectsApi";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = getProjectsApiBase();
 const ADMIN_SESSION_KEY = "dfab_admin_logged_in";
 const ADMIN_TOKEN_KEY = "dfab_admin_token";
 
@@ -34,6 +35,8 @@ export default function AdminProjects() {
   const [imageName, setImageName] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [projectsLoading, setProjectsLoading] = useState(false);
+  const [projectsError, setProjectsError] = useState("");
 
   const getToken = () => localStorage.getItem(ADMIN_TOKEN_KEY) || "";
 
@@ -50,21 +53,31 @@ export default function AdminProjects() {
 
   const fetchProjects = async () => {
     try {
+      setProjectsLoading(true);
+      setProjectsError("");
+
       const res = await axios.get(`${API}/admin/projects`, {
-        headers: authHeaders(),
+        headers: {
+          ...authHeaders(),
+          Accept: "application/json",
+          "Cache-Control": "no-cache",
+        },
+        params: { _ts: Date.now() },
       });
 
-      const mappedProjects = (res.data || []).map((project) => ({
-        ...project,
-        featured: Boolean(project.featured),
-      }));
-
-      setProjects(mappedProjects);
+      setProjects(normalizeProjects(res.data));
     } catch (error) {
       console.error("Failed to fetch projects:", error);
       if (error?.response?.status === 401) {
         handleUnauthorized();
+      } else {
+        setProjectsError(
+          error?.response?.data?.detail ||
+            "Could not load published projects. Please retry."
+        );
       }
+    } finally {
+      setProjectsLoading(false);
     }
   };
 
@@ -165,6 +178,7 @@ export default function AdminProjects() {
       setImageName("");
       setEditingId(null);
       await fetchProjects();
+      window.dispatchEvent(new Event("dfab:projects-updated"));
     } catch (error) {
       console.error("Failed to save project:", error);
       if (error?.response?.status === 401) {
@@ -207,6 +221,7 @@ export default function AdminProjects() {
 
       if (editingId === id) cancelEdit();
       await fetchProjects();
+      window.dispatchEvent(new Event("dfab:projects-updated"));
     } catch (error) {
       console.error("Failed to delete project:", error);
       if (error?.response?.status === 401) {
@@ -238,6 +253,7 @@ export default function AdminProjects() {
         headers: authHeaders(),
       });
       await fetchProjects();
+      window.dispatchEvent(new Event("dfab:projects-updated"));
     } catch (error) {
       console.error("Failed to update featured state:", error);
       if (error?.response?.status === 401) {
@@ -495,6 +511,25 @@ export default function AdminProjects() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-8 bg-slate-50/50 custom-scrollbar">
+              {projectsError && (
+                <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 flex items-center justify-between gap-4">
+                  <span>{projectsError}</span>
+                  <button
+                    type="button"
+                    onClick={fetchProjects}
+                    className="shrink-0 rounded-lg bg-red-600 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-white hover:bg-red-700"
+                  >
+                    Retry
+                  </button>
+                </div>
+              )}
+
+              {projectsLoading && projects.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center py-20 text-slate-400">
+                  <div className="w-8 h-8 rounded-full border-2 border-slate-200 border-t-[#0A66C2] animate-spin mb-4" />
+                  <p className="font-bold uppercase tracking-widest text-xs">Loading Projects</p>
+                </div>
+              ) : (
               <div className="grid grid-cols-1 gap-8">
                 {projects.map((project) => (
                   <div
@@ -511,9 +546,18 @@ export default function AdminProjects() {
                         alt=""
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
-                      <div className="absolute top-4 left-4 flex gap-2">
+                      <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                         <span className="bg-white/90 backdrop-blur-md text-slate-900 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
                           {project.tag}
+                        </span>
+                        <span
+                          className={`text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest shadow-sm ${
+                            project.published !== false
+                              ? "bg-emerald-500 text-white"
+                              : "bg-slate-700 text-white"
+                          }`}
+                        >
+                          {project.published !== false ? "Published" : "Draft"}
                         </span>
                       </div>
                     </div>
@@ -560,8 +604,9 @@ export default function AdminProjects() {
                   </div>
                 ))}
               </div>
+              )}
 
-              {projects.length === 0 && (
+              {!projectsLoading && !projectsError && projects.length === 0 && (
                 <div className="h-full flex flex-col items-center justify-center py-20 text-slate-300">
                   <PlusCircle size={48} className="mb-4 opacity-20" />
                   <p className="font-bold uppercase tracking-widest text-xs">

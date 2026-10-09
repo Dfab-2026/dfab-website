@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle, Award, Linkedin, Mail } from "lucide-react";
+import { CheckCircle, Award, Linkedin, Mail, Settings } from "lucide-react";
 import { useReveal } from "../hooks/useReveal";
 import factoryImg from "../assets/images/abtfac.jpg";
 import jithedraImg from "../assets/images/leaders/Jithendra.jpg";
@@ -70,7 +70,18 @@ export default function About() {
   };
 
   return (
-    <main className="bg-white">
+    <main className="bg-white relative">
+      {/* ADMIN ACCESS - reuses the same admin authentication as Projects */}
+      <div className="absolute top-4 right-4 z-40 opacity-50 hover:opacity-100 transition-all duration-300">
+        <Link
+          to="/admin/analytics"
+          className="flex items-center gap-1.5 px-3 py-2 bg-white/20 text-white/70 hover:text-white hover:bg-[#0A66C2] rounded-lg border border-white/20 hover:border-[#0A66C2] transition-all shadow-lg backdrop-blur-sm"
+        >
+          <Settings size={14} />
+          <span className="text-[10px] font-black uppercase tracking-widest">Admin</span>
+        </Link>
+      </div>
+
       {/* HEADER SECTION */}
       <div className="bg-[#0F172A] h-[260px] flex items-center px-4">
         <div className="max-w-7xl mx-auto w-full">

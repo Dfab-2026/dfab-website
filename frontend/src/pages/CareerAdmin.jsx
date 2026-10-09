@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { getApiBase } from "../utils/backendApi";
 import {
   Plus,
   Edit3,
@@ -15,7 +16,7 @@ import {
   PlusCircle,
 } from "lucide-react";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = getApiBase();
 const ADMIN_SESSION_KEY = "career_admin";
 const ADMIN_TOKEN_KEY = "dfab_admin_token";
 

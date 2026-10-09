@@ -15,8 +15,9 @@ import {
   PlusCircle,
 } from "lucide-react";
 import axios from "axios";
+import { getApiBase } from "../utils/backendApi";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = getApiBase();
 const ADMIN_SESSION_KEY = "dfab_admin_logged_in";
 const ADMIN_TOKEN_KEY = "dfab_admin_token";
 
@@ -67,8 +68,15 @@ export default function BlogAdmin() {
     if (!token) return;
     setLoading(true);
     try {
-      const r = await axios.get(`${API}/admin/blog/posts`, { headers });
-      setPosts(r.data);
+      const r = await axios.get(`${API}/admin/blog/posts`, {
+        headers: {
+          ...headers,
+          Accept: "application/json",
+          "Cache-Control": "no-cache",
+        },
+        params: { _ts: Date.now() },
+      });
+      setPosts(Array.isArray(r.data) ? r.data : []);
     } catch (err) {
       if (err?.response?.status === 401) {
         handleLogout();
@@ -166,7 +174,7 @@ export default function BlogAdmin() {
       setForm(EMPTY_FORM);
       setImageName("");
       setEditingPost(null);
-      fetchPosts();
+      await fetchPosts();
     } catch (err) {
       if (err?.response?.status === 401) {
         handleLogout();
@@ -183,7 +191,7 @@ export default function BlogAdmin() {
     if (!window.confirm(`Delete "${title}"?`)) return;
     try {
       await axios.delete(`${API}/admin/blog/posts/${id}`, { headers });
-      fetchPosts();
+      await fetchPosts();
     } catch (err) {
       if (err?.response?.status === 401) {
         handleLogout();

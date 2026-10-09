@@ -12,8 +12,10 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import axios from "axios";
+import { getVisitorId } from "../utils/analyticsApi";
+import { getApiBase } from "../utils/backendApi";
 
-const API = "https://dfab-backend.onrender.com/api";
+const API = getApiBase();
 
 const EMPTY = {
   name: "",
@@ -40,6 +42,7 @@ export default function Contact() {
     formData.append("subject", form.subject);
     formData.append("message", form.message);
     if (form.phone) formData.append("phone", form.phone);
+    formData.append("visitor_id", getVisitorId());
     if (file) formData.append("file", file);
 
     try {

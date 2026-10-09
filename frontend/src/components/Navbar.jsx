@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Download } from "lucide-react";
 import InquireModal from "./InquireModal";
 import logo from "../logo.png";
+import { getVisitorId, recordBrochureDownload } from "../utils/analyticsApi";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -34,6 +35,18 @@ export default function Navbar() {
     /^\d{10}$/.test(brochureForm.mobile);
 
   const handleDownloadBrochure = () => {
+    const lead = {
+      name: brochureForm.name.trim(),
+      email: brochureForm.email.trim(),
+      mobile: brochureForm.mobile.trim(),
+      path: location.pathname || "/",
+      visitor_id: getVisitorId(),
+    };
+
+    // Record the existing brochure form details for the admin analytics dashboard.
+    // The actual download is never blocked if analytics is temporarily unavailable.
+    recordBrochureDownload(lead).catch(() => {});
+
     const link = document.createElement("a");
     link.href = "/brochure.pdf";
     link.download = "DFAB-Brochure.pdf";

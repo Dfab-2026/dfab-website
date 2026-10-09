@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
-import axios from "axios";
 import {
   ChevronRight,
   ChevronLeft,
@@ -17,6 +16,7 @@ import {
 import { useReveal } from "../hooks/useReveal";
 import InquireModal from "../components/InquireModal";
 import { SERVICES as ALL_SERVICES } from "./Services";
+import { fetchPublishedProjects } from "../utils/projectsApi";
 
 // Hero
 import hero1 from "../assets/images/hero1.jpg";
@@ -57,7 +57,6 @@ import kennametal from "../assets/images/clients/kennametal.png";
 import leeboy from "../assets/images/clients/leeboy.png";
 import triveni from "../assets/images/clients/triveni.png";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const HERO_SLIDES = [
   {
@@ -724,6 +723,7 @@ function TestimonialsSection() {
 export default function Home() {
   const [showInquire, setShowInquire] = useState(false);
   const [featuredProjects, setFeaturedProjects] = useState([]);
+  const [featuredProjectsLoading, setFeaturedProjectsLoading] = useState(true);
   const aboutRef = useReveal();
   const servicesRef = useReveal();
   const whyRef = useReveal();
@@ -734,25 +734,51 @@ export default function Home() {
   const ctaRef = useReveal();
 
   useEffect(() => {
-    const loadProjects = async () => {
+    let cancelled = false;
+    let retryTimer;
+
+    const loadProjects = async (retryOnFailure = true) => {
       try {
-        const res = await axios.get(`${API}/projects`);
-        const allProjects = Array.isArray(res.data) ? res.data : [];
-        const featured = allProjects.filter((p) => p.featured).slice(0, 3);
-        const fallback = allProjects.slice(0, 3);
-        setFeaturedProjects(featured.length ? featured : fallback);
+        const allProjects = await fetchPublishedProjects({ timeoutMs: 35000 });
+        if (cancelled) return;
+
+        const featured = allProjects.filter((project) => project.featured).slice(0, 3);
+        const remaining = allProjects
+          .filter((project) => !featured.some((item) => String(item.id) === String(project.id)))
+          .slice(0, Math.max(0, 3 - featured.length));
+
+        // Homepage cards come only from MongoDB. Featured projects are first;
+        // other published database projects fill any remaining of the 3 slots.
+        setFeaturedProjects([...featured, ...remaining].slice(0, 3));
+        setFeaturedProjectsLoading(false);
       } catch (error) {
         console.error("Failed to fetch featured projects:", error);
-        setFeaturedProjects([]);
+        if (retryOnFailure && !cancelled) {
+          retryTimer = window.setTimeout(() => {
+            retryTimer = undefined;
+            loadProjects(false);
+          }, 2500);
+          return;
+        }
+
+        if (!cancelled) {
+          setFeaturedProjects([]);
+          setFeaturedProjectsLoading(false);
+        }
       }
     };
 
     loadProjects();
 
-    window.addEventListener("focus", loadProjects);
+    const handleFocus = () => loadProjects(false);
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("dfab:projects-updated", handleFocus);
 
     return () => {
-      window.removeEventListener("focus", loadProjects);
+      cancelled = true;
+      if (retryTimer) window.clearTimeout(retryTimer);
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("dfab:projects-updated", handleFocus);
     };
   }, []);
 
@@ -983,7 +1009,22 @@ export default function Home() {
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-            {featuredProjects.map((p) => (
+            {featuredProjectsLoading
+              ? [...Array(3)].map((_, index) => (
+                  <div
+                    key={`featured-project-loading-${index}`}
+                    className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm h-[360px] animate-pulse"
+                    aria-hidden="true"
+                  >
+                    <div className="aspect-[16/10] bg-slate-200" />
+                    <div className="p-6 space-y-3">
+                      <div className="h-5 bg-slate-200 rounded w-2/3" />
+                      <div className="h-3 bg-slate-100 rounded w-full" />
+                      <div className="h-3 bg-slate-100 rounded w-5/6" />
+                    </div>
+                  </div>
+                ))
+              : featuredProjects.map((p) => (
               <div
                 key={p.id}
                 className="reveal group bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm flex flex-col h-full transition-all duration-700 hover:border-[#0A66C2]/30 hover:shadow-xl [transform-style:preserve-3d] hover:[transform:perspective(1200px)_rotateY(6deg)_rotateX(3deg)_translateY(-10px)_scale(1.02)]"

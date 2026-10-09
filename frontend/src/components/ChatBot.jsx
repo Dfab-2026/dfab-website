@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { X, Send, Bot, User, Loader2, Sparkles } from "lucide-react";
 import axios from "axios";
+import { getApiBase } from "../utils/backendApi";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = getApiBase();
 
 const PROACTIVE_PROMPTS = [
   "👋 Need help with a fabrication project?",
@@ -25,7 +26,11 @@ const QUICK_QUESTIONS = [
 function getSessionId() {
   let sid = sessionStorage.getItem("dfab_chat_sid");
   if (!sid) {
-    sid = "chat_" + Math.random().toString(36).substring(2, 10);
+    const randomPart =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+    sid = `chat_${randomPart}`;
     sessionStorage.setItem("dfab_chat_sid", sid);
   }
   return sid;
@@ -168,13 +173,17 @@ export default function ChatBot() {
     setMessages((prev) => [...prev, { role: "user", text: msg }]);
     setLoading(true);
     try {
-      const r = await axios.post(`${API}/chat`, { session_id: sessionId.current, message: msg });
+      const r = await axios.post(
+        `${API}/chat`,
+        { session_id: sessionId.current, message: msg },
+        { timeout: 15000 }
+      );
       setMessages((prev) => [...prev, { role: "assistant", text: r.data.response }]);
       if (!open) setUnread((n) => n + 1);
     } catch {
       setMessages((prev) => [...prev, {
         role: "assistant",
-        text: "I'm having trouble connecting right now. Please WhatsApp us at +91 8043748186 for immediate help!",
+        text: "I'm having trouble connecting right now. Please WhatsApp us at +91 9187638186 for immediate help!",
       }]);
     } finally {
       setLoading(false);

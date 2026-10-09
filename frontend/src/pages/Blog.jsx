@@ -1,57 +1,40 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Calendar, User, Tag, Settings } from "lucide-react";
+import { Calendar, User, Settings, RefreshCw } from "lucide-react";
 import axios from "axios";
+import { getApiBase } from "../utils/backendApi";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = getApiBase();
 
 const CATEGORIES = ["All", "Fabrication", "Welding", "Industry News", "Quality", "Projects"];
-
-// Sample data includes full content for demonstration
-const SAMPLE_POSTS = [
-  {
-    id: "sample-1",
-    title: "Understanding 6G Pipe Welding Qualification",
-    content: "6G is the most demanding pipe welding position. It involves a 45-degree angle that tests a welder's ability to handle all directions. \n\nIn industrial fabrication, qualifying for 6G means the welder is capable of welding in all positions (1G, 2G, 5G). This is critical for pipeline projects where pipes cannot be rotated. The process requires immense control over the weld pool to prevent sagging and ensure full penetration at the root. At DFAB, we prioritize these qualifications to ensure structural integrity in high-pressure systems.",
-    category: "Welding",
-    author: "DFAB Team",
-    image_url: "https://images.unsplash.com/photo-1763684041948-f254c06b1a05?crop=entropy&cs=srgb&fm=jpg&q=85",
-    created_at: "2024-12-01T00:00:00",
-  },
-  {
-    id: "sample-2",
-    title: "ISO 9001:2015 in Industrial Fabrication",
-    content: "ISO 9001:2015 certification is not just a badge; it's a commitment to quality excellence. In the world of stainless steel fabrication, it drives every stage of our workflow. \n\nFrom material traceability to final inspection, our systems are designed to minimize errors and maximize durability. For our clients in the dairy and pharma sectors, this means equipment that meets stringent hygiene and safety standards. Every project documented at DFAB follows these rigorous quality management protocols.",
-    category: "Quality",
-    author: "DFAB Team",
-    image_url: "https://images.unsplash.com/photo-1747999060057-89b7a533f347?crop=entropy&cs=srgb&fm=jpg&q=85",
-    created_at: "2024-11-15T00:00:00",
-  },
-  {
-    id: "sample-3",
-    title: "Pressure Vessel Fabrication Standards",
-    content: "Fabricating pressure vessels involves adhering to strict ASME codes. These standards ensure that vessels can withstand internal or external pressure safely. \n\nWe focus on specialized welding techniques and non-destructive testing (NDT) to verify the strength of every joint. Whether it is for chemical processing or food storage, DFAB ensures that every vessel is engineered with a high factor of safety and long-term operational reliability.",
-    category: "Fabrication",
-    author: "DFAB Team",
-    image_url: "https://images.unsplash.com/photo-1513828170880-00eeeac21306?crop=entropy&cs=srgb&fm=jpg&q=85",
-    created_at: "2024-11-01T00:00:00",
-  },
-];
 
 export default function Blog() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
 
-  useEffect(() => {
-    axios
-      .get(`${API}/blog/posts`)
-      .then((r) => {
-        setPosts(r.data.length > 0 ? r.data : SAMPLE_POSTS);
-      })
-      .catch(() => setPosts(SAMPLE_POSTS))
-      .finally(() => setLoading(false));
+  const loadPosts = useCallback(async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await axios.get(`${API}/blog/posts`, {
+        headers: { Accept: "application/json", "Cache-Control": "no-cache" },
+        params: { _ts: Date.now() },
+      });
+      setPosts(Array.isArray(response.data) ? response.data : []);
+    } catch (err) {
+      console.error("Failed to load blog posts from MongoDB:", err);
+      setPosts([]);
+      setError("Could not load published posts from the database.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadPosts();
+  }, [loadPosts]);
 
   const filtered =
     activeCategory === "All"
@@ -124,6 +107,23 @@ export default function Blog() {
                 <div key={i} className="animate-pulse bg-slate-50 h-[550px] rounded-xl" />
               ))}
             </div>
+          ) : error ? (
+            <div className="border border-red-100 bg-red-50 rounded-xl p-8 text-center">
+              <p className="text-sm font-semibold text-red-700">{error}</p>
+              <button
+                type="button"
+                onClick={loadPosts}
+                className="mt-4 inline-flex items-center gap-2 bg-[#0A66C2] text-white px-5 py-2.5 rounded-md text-sm font-bold hover:bg-[#084e96] transition-colors"
+              >
+                <RefreshCw size={15} /> Retry
+              </button>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="border border-slate-200 bg-slate-50 rounded-xl p-10 text-center">
+              <p className="text-sm font-semibold text-slate-600">
+                No published blog posts are available in the database.
+              </p>
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map((post) => (
@@ -132,12 +132,18 @@ export default function Blog() {
                   className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col h-[550px]"
                 >
                   {/* Fixed Image Area */}
-                  <div className="relative h-44 overflow-hidden shrink-0">
-                    <img
-                      src={post.image_url}
-                      alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
+                  <div className="relative h-44 overflow-hidden shrink-0 bg-slate-100">
+                    {post.image_url ? (
+                      <img
+                        src={post.image_url}
+                        alt={post.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center px-6 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                        DFAB Technical Blog
+                      </div>
+                    )}
                     <div className="absolute top-3 left-3">
                       <span className="bg-[#0A66C2] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase">
                         {post.category}

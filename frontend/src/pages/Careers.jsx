@@ -2,13 +2,11 @@ import { Link } from "react-router-dom";
 import { useMemo, useEffect, useState } from "react";
 import { useReveal } from "../hooks/useReveal";
 import axios from "axios";
+import { getApiBase } from "../utils/backendApi";
 
 import { MapPin, Mail, Phone, CheckCircle, ArrowRight, Users, Award, Zap, Settings } from "lucide-react";
 
-const API =
-  process.env.REACT_APP_BACKEND_URL
-    ? `${process.env.REACT_APP_BACKEND_URL}/api`
-    : "http://localhost:8000/api";
+const API = getApiBase();
 
 const DEFAULT_OPENINGS = [
   {

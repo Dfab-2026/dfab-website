@@ -20,6 +20,9 @@ import BlogAdmin from "./pages/BlogAdmin";
 import Contact from "./pages/Contact";
 import WhatsAppButton from "./components/WhatsAppButton";
 import ChatBot from "./components/ChatBot";
+import RouteSEO from "./components/RouteSEO";
+import AnalyticsTracker from "./components/AnalyticsTracker";
+import AdminAnalytics from "./pages/AdminAnalytics";
 
 // Global intersection observer for scroll reveal animations
 function GlobalReveal() {
@@ -87,6 +90,8 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <GlobalReveal />
+        <RouteSEO />
+        <AnalyticsTracker />
         <ScrollToTop />
         <Navbar />
 
@@ -101,6 +106,7 @@ function App() {
             <Route path="/careers/admin" element={<CareerAdmin />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/admin/projects" element={<AdminProjects />} />
+            <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/infrastructure" element={<Infrastructure />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<BlogPost />} />

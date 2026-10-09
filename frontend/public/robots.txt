@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /blog/admin
+Disallow: /careers/admin
+
+Sitemap: https://dfab.in/sitemap.xml

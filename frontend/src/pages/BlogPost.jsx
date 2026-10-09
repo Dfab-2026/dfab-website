@@ -1,25 +1,45 @@
 import { useState, useEffect } from "react";
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Calendar, User, Tag, ArrowLeft, Share2 } from "lucide-react";
 import axios from "axios";
+import { getApiBase } from "../utils/backendApi";
+import AutoSEOHead from "../components/AutoSEOHead";
+import { DEFAULT_OG_IMAGE, SITE_URL } from "../seoConfig";
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API = getApiBase();
 
 export default function BlogPost() {
   const { id } = useParams();
-  const location = useLocation();
-  const [post, setPost] = useState(location.state?.post || null);
-  const [loading, setLoading] = useState(!post);
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!post) {
-      axios
-        .get(`${API}/blog/posts/${id}`)
-        .then((r) => setPost(r.data))
-        .catch(() => {})
-        .finally(() => setLoading(false));
-    }
-  }, [id, post]);
+    let cancelled = false;
+    setLoading(true);
+    setPost(null);
+
+    axios
+      .get(`${API}/blog/posts/${id}`, {
+        headers: { Accept: "application/json", "Cache-Control": "no-cache" },
+        params: { _ts: Date.now() },
+      })
+      .then((r) => {
+        if (!cancelled) setPost(r.data);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error("Failed to load blog post from MongoDB:", err);
+          setPost(null);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   const formatDate = (d) =>
     new Date(d).toLocaleDateString("en-IN", {
@@ -45,8 +65,62 @@ export default function BlogPost() {
     );
   }
 
+  const rawSeoDescription = (post.excerpt || post.content || "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const seoDescription = (
+    rawSeoDescription.length >= 80
+      ? rawSeoDescription
+      : `${rawSeoDescription} Read DFAB technical insights on industrial fabrication, welding and manufacturing practices.`
+  )
+    .trim()
+    .slice(0, 165);
+  const seoTitle = `${post.title} | DFAB`.slice(0, 70);
+  const seoKeywords = Array.from(
+    new Set([post.category, ...(post.tags || []), "DFAB", "industrial manufacturing"])
+  ).filter(Boolean);
+  const canonicalPath = `/blog/${id}`;
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: seoDescription,
+    image: post.image_url || DEFAULT_OG_IMAGE,
+    datePublished: post.created_at,
+    dateModified: post.updated_at || post.created_at,
+    author: {
+      "@type": "Organization",
+      name: post.author || "DFAB Team",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "DFAB Stainless System Pvt Ltd",
+      logo: {
+        "@type": "ImageObject",
+        url: DEFAULT_OG_IMAGE,
+      },
+    },
+    mainEntityOfPage: `${SITE_URL}${canonicalPath}`,
+  };
+
   return (
-    <main className="bg-white">
+    <>
+      <AutoSEOHead
+        cacheKey={`blog:${id}:${post.updated_at || post.created_at || "current"}`}
+        title={seoTitle}
+        description={seoDescription}
+        keywords={seoKeywords}
+        canonicalPath={canonicalPath}
+        image={post.image_url || DEFAULT_OG_IMAGE}
+        imageAlt={post.title}
+        type="article"
+        publishedTime={post.created_at}
+        modifiedTime={post.updated_at || post.created_at}
+        author={post.author || "DFAB Team"}
+        schema={articleSchema}
+        contentSummary={`${post.title}. ${post.excerpt || ""} ${(post.content || "").slice(0, 1200)}`}
+      />
+      <main className="bg-white">
       {/* Visual Header */}
       {post.image_url && (
         <div className="relative h-72 md:h-96">
@@ -154,6 +228,7 @@ export default function BlogPost() {
           font-family: 'Inter', sans-serif;
         }
       `}</style>
-    </main>
+      </main>
+    </>
   );
 }

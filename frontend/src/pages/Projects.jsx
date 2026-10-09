@@ -1,31 +1,53 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ArrowRight, Settings, Target } from "lucide-react";
+import { ArrowRight, Settings, Target, RefreshCw } from "lucide-react";
 import { SERVICES as ALL_SERVICES } from "./Services";
-import axios from "axios";
-
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+import CinematicScrollSequence from "../components/CinematicScrollSequence";
+import { fetchPublishedProjects } from "../utils/projectsApi";
 
 export default function Projects() {
   const location = useLocation();
   const [projects, setProjects] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
+  const [projectsError, setProjectsError] = useState("");
 
   const isProjectsOnly = location.hash === "#projects";
   const isServicesOnly = location.hash === "#services";
   const isFullPage = !location.hash;
 
   useEffect(() => {
-    axios
-      .get(`${API}/projects`)
-      .then((res) => {
-        setProjects(Array.isArray(res.data) ? res.data : []);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch projects:", err);
+    const controller = new AbortController();
+    let retryTimer;
+
+    const loadProjects = async (allowRetry = true) => {
+      setProjectsError("");
+      try {
+        const databaseProjects = await fetchPublishedProjects({
+          signal: controller.signal,
+          timeoutMs: 35000,
+        });
+        if (controller.signal.aborted) return;
+        setProjects(databaseProjects);
+        setLoadingProjects(false);
+      } catch (err) {
+        if (err?.name === "AbortError" || controller.signal.aborted) return;
+        console.error("Failed to fetch projects from MongoDB:", err);
+        if (allowRetry) {
+          retryTimer = window.setTimeout(() => loadProjects(false), 2500);
+          return;
+        }
         setProjects([]);
-      })
-      .finally(() => setLoadingProjects(false));
+        setProjectsError("Could not load published projects from the database.");
+        setLoadingProjects(false);
+      }
+    };
+
+    loadProjects();
+
+    return () => {
+      controller.abort();
+      if (retryTimer) window.clearTimeout(retryTimer);
+    };
   }, []);
 
   const processedProjects = useMemo(() => {
@@ -106,6 +128,12 @@ export default function Projects() {
             </div>
           </div>
 
+          {/* SPACING BETWEEN PROJECTS HEADER AND VIDEO */}
+          <div className="h-10 md:h-14 lg:h-16 bg-white" aria-hidden="true" />
+
+          {/* CINEMATIC PRODUCT MOTION - image-sequence scroll renderer */}
+          <CinematicScrollSequence />
+
           {/* PROJECTS GRID */}
           <section id="projects-section" className="py-16 md:py-24 bg-white">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -117,6 +145,20 @@ export default function Projects() {
                       className="bg-white border border-slate-200 rounded-xl h-[520px] animate-pulse"
                     />
                   ))}
+                </div>
+              ) : projectsError ? (
+                <div className="text-center py-16 border border-red-100 bg-red-50 rounded-xl">
+                  <h3 className="text-xl font-bold text-red-800 font-['Chivo']">
+                    Projects Database Unavailable
+                  </h3>
+                  <p className="text-red-600 mt-3 max-w-xl mx-auto">{projectsError}</p>
+                  <button
+                    type="button"
+                    onClick={() => window.location.reload()}
+                    className="mt-5 inline-flex items-center gap-2 bg-[#0A66C2] text-white px-5 py-2.5 rounded-md text-sm font-bold hover:bg-[#084e96] transition-colors"
+                  >
+                    <RefreshCw size={15} /> Retry
+                  </button>
                 </div>
               ) : processedProjects.length === 0 ? (
                 <div className="text-center py-16">
@@ -135,12 +177,18 @@ export default function Projects() {
                       className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col h-[520px]"
                     >
                       {/* IMAGE BOX WITH CLEAR BLUE TAG */}
-                      <div className="relative overflow-hidden h-48 shrink-0">
-                        <img
-                          src={p.img}
-                          alt={p.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        />
+                      <div className="relative overflow-hidden h-48 shrink-0 bg-slate-100">
+                        {p.img ? (
+                          <img
+                            src={p.img}
+                            alt={p.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center px-6 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                            DFAB Project
+                          </div>
+                        )}
 
                         {/* FIXED OVERLAY TAG (NO CUTS) */}
                         <div className="absolute top-4 left-4 z-20">

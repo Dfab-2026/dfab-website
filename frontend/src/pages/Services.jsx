@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import ScrollScrubVideo from "../components/ScrollScrubVideo";
 
 
 
@@ -107,7 +108,7 @@ export const SERVICES = [
 export default function Services() {
   return (
     <main className="bg-white">
-      
+      <ScrollScrubVideo fallbackImage={sheetmetalImg} playbackSpeed={1.65} />
 
       <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
