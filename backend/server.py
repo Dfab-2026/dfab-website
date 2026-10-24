@@ -18,7 +18,6 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import hashlib
 import json
 import asyncio
-import time
 
 try:
     import resend
@@ -71,8 +70,6 @@ except ZoneInfoNotFoundError:
     logger.warning(
         "System timezone database is unavailable; analytics will use the fixed IST offset (+05:30)."
     )
-ANALYTICS_SUMMARY_CACHE_TTL_SECONDS = 3.0
-_analytics_summary_cache = {}
 
 if not MONGO_URL:
     raise RuntimeError("MONGO_URL is missing in backend/.env / Render Environment")
@@ -125,7 +122,7 @@ DFAB_SYSTEM_MSG = """You are DFAB AI Assistant for DFAB Stainless System Pvt Ltd
 
 Company facts: established 28 September 2018; address No: 3B/415, No-8 KIADB Main Road, Peenya Industrial Area, Bengaluru 560058; facility about 7000 sq ft with a 5-ton crane, 10+ TIG/MIG welding machines, and CNC/conventional machines. Services include sheet-metal fabrication, pressure-vessel fabrication, pipeline fabrication and 6G welding, stellite welding, die welding, custom fabrication, jigs and fixtures, precision machining, and new product/prototype development. Common materials include stainless steel, aluminium and carbon steel. Industries include energy, pharmaceuticals, locomotive, aeronautical, food/dairy and automotive.
 
-Contact: 9187638186 | info@dfab.in | WhatsApp +91 9187638186.
+Contact: 9187638186 | info@dfab.in | WhatsApp +91 9908504466.
 
 Answer clearly and concisely from the company facts above and general manufacturing knowledge. For project pricing or quotations, ask the visitor to contact DFAB or submit an inquiry. Prefer 2-6 sentences or short bullets unless more detail is requested."""
 
@@ -711,7 +708,7 @@ def get_local_chat_response(latest_message: str):
     ]):
         return (
             "For an accurate quotation, share your drawing, material, quantity and delivery requirement "
-            "through the DFAB inquiry form, or contact 9187638186 / WhatsApp +91 9187638186."
+            "through the DFAB inquiry form, or contact 9187638186 / WhatsApp +91 9908504466."
         )
 
     if any(term in lower_msg for term in [
@@ -725,7 +722,7 @@ def get_local_chat_response(latest_message: str):
     if any(term in lower_msg for term in [
         "contact", "phone number", "email address", "whatsapp number"
     ]):
-        return "You can reach DFAB at 9187638186, info@dfab.in, or WhatsApp +91 9187638186."
+        return "You can reach DFAB at 9187638186, info@dfab.in, or WhatsApp +91 9908504466."
 
     return None
 
@@ -897,14 +894,14 @@ def get_fallback_response(latest_message: str) -> str:
 
     if any(term in lower_msg for term in ["contact", "phone", "email", "address", "location", "whatsapp"]):
         return (
-            "You can reach DFAB at 9187638186, info@dfab.in, or WhatsApp +919187638186. "
+            "You can reach DFAB at 9187638186, info@dfab.in, or WhatsApp +919908504466. "
             "The facility is in Peenya Industrial Area, Bengaluru."
         )
 
     if any(term in lower_msg for term in ["quote", "pricing", "price", "cost", "estimate", "quotation"]):
         return (
             "For pricing or a quotation, please contact DFAB directly at 9187638186 or "
-            "WhatsApp +91 9187638186 so the team can review your fabrication requirement."
+            "WhatsApp +91 9908504466 so the team can review your fabrication requirement."
         )
 
     if any(term in lower_msg for term in ["industry", "industries", "sector", "sectors"]):
@@ -1365,7 +1362,6 @@ async def record_site_view(event: AnalyticsViewCreate):
         "created_at": now,
         **analytics_dimensions(now),
     })
-    _analytics_summary_cache.clear()
     return {"status": "ok"}
 
 
@@ -1391,7 +1387,6 @@ async def record_brochure_download(event: BrochureDownloadCreate):
         **analytics_dimensions(now),
     }
     await db.brochure_downloads.insert_one(doc)
-    _analytics_summary_cache.clear()
     return {"status": "recorded"}
 
 
@@ -1404,6 +1399,7 @@ async def admin_login(credentials: AdminLogin):
 
 @api_router.get("/admin/analytics/summary")
 async def admin_analytics_summary(
+    response: Response,
     period: str = Query("all"),
     date_value: Optional[str] = Query(None, alias="date"),
     month_value: Optional[str] = Query(None, alias="month"),
@@ -1418,11 +1414,8 @@ async def admin_analytics_summary(
         normalized_period, date_value, month_value, year_value
     )
 
-    cache_key = f"{normalized_period}|{date_value or ''}|{month_value or ''}|{year_value or ''}"
-    cached = _analytics_summary_cache.get(cache_key)
-    now_monotonic = time.monotonic()
-    if cached and now_monotonic - cached[0] < ANALYTICS_SUMMARY_CACHE_TTL_SECONDS:
-        return cached[1]
+    # Always read the current MongoDB state. Direct database deletes/edits must be visible immediately.
+    response.headers["Cache-Control"] = "no-store, max-age=0"
 
     if normalized_period == "date":
         trend_expr = {
@@ -1503,15 +1496,6 @@ async def admin_analytics_summary(
                     {"$group": {"_id": trend_expr, "views": {"$sum": 1}}},
                     {"$sort": {"_id": 1}},
                 ],
-                "recent_views": [
-                    {"$sort": {"created_at": -1}},
-                    {"$limit": 50},
-                    {"$project": {
-                        "_id": 0, "id": 1, "path": 1, "visitor_id": 1,
-                        "referrer": 1, "created_at": 1, "date_key": 1,
-                        "month_key": 1, "year": 1, "month": 1, "day": 1,
-                    }},
-                ],
             }
         }
     ]
@@ -1583,10 +1567,8 @@ async def admin_analytics_summary(
         "trend_views": trend_views,
         "trend_title": trend_title,
         "recent_brochure_downloads": brochure_data.get("recent_downloads") or [],
-        "recent_views": site_data.get("recent_views") or [],
     }
 
-    _analytics_summary_cache[cache_key] = (now_monotonic, result)
     return result
 
 

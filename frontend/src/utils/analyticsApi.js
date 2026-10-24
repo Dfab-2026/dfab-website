@@ -1,4 +1,4 @@
-import { getApiBase } from "./backendApi";
+import { getApiBase, getDirectApiBase } from "./backendApi";
 
 const VISITOR_ID_KEY = "dfab_analytics_visitor_id";
 
@@ -17,14 +17,26 @@ export function getVisitorId() {
   return visitorId;
 }
 
-export async function analyticsRequest(endpoint, options = {}) {
-  const root = getApiBase();
+function uniqueRoots() {
+  const roots = [getApiBase(), getDirectApiBase()].filter(Boolean);
+  return [...new Set(roots)];
+}
+
+function shouldTryNextRoot(error) {
+  // Authentication/validation errors are real API responses and must never be
+  // hidden by switching servers. Retry only connectivity/proxy/server-gateway
+  // failures where the same request can safely reach the same Render backend.
+  if (!error?.status) return true;
+  return [404, 408, 502, 503, 504].includes(error.status);
+}
+
+async function fetchAnalyticsRoot(root, endpoint, fetchOptions, timeoutMs) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 3000);
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const response = await fetch(`${root}${endpoint}`, {
-      ...options,
+      ...fetchOptions,
       signal: controller.signal,
     });
 
@@ -44,7 +56,9 @@ export async function analyticsRequest(endpoint, options = {}) {
     return contentType.includes("application/json") ? await response.json() : null;
   } catch (error) {
     if (error?.name === "AbortError") {
-      const timeoutError = new Error("Analytics request timed out");
+      const timeoutError = new Error(
+        `Analytics request timed out after ${Math.round(timeoutMs / 1000)} seconds`
+      );
       timeoutError.status = 408;
       throw timeoutError;
     }
@@ -52,6 +66,27 @@ export async function analyticsRequest(endpoint, options = {}) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+export async function analyticsRequest(endpoint, options = {}) {
+  const { timeoutMs = 60000, ...fetchOptions } = options;
+  const roots = uniqueRoots();
+  let lastError = null;
+
+  for (let index = 0; index < roots.length; index += 1) {
+    const root = roots[index];
+    try {
+      return await fetchAnalyticsRoot(root, endpoint, fetchOptions, timeoutMs);
+    } catch (error) {
+      lastError = error;
+      const hasAnotherRoot = index < roots.length - 1;
+      if (!hasAnotherRoot || !shouldTryNextRoot(error)) {
+        throw error;
+      }
+    }
+  }
+
+  throw lastError || new Error("Analytics API is unavailable");
 }
 
 export function recordPageView(payload) {

@@ -31,7 +31,7 @@ export default function Infrastructure() {
   return (
     <main className="bg-white">
       {/* HEADER SECTION - Standardized */}
-      <div className="bg-[#0F172A] h-[260px] flex items-center px-4">
+      <div className="bg-[#0F172A] min-h-[240px] sm:min-h-[260px] flex items-center px-4 py-8">
         <div className="max-w-7xl mx-auto w-full">
           <span className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider">Our Facility</span>
           <h1 className="text-4xl md:text-5xl font-bold text-white mt-2 font-['Chivo']">Infrastructure</h1>
@@ -63,7 +63,7 @@ export default function Infrastructure() {
                 Our facility is designed to handle end-to-end fabrication projects — from raw material processing to final quality inspection and delivery.
               </p>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-4">
                 {[
                   { value: "14000 sqft", label: "Workshop Area" },
                   { value: "5 Tons", label: "Crane Capacity" },
@@ -79,7 +79,7 @@ export default function Infrastructure() {
             </div>
 
             {/* Right Images - Balanced Alignment */}
-            <div className="grid grid-cols-2 gap-4 h-full content-center">
+            <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-4 h-full content-center">
   <img
     src={img1}
     alt="Factory Overview"

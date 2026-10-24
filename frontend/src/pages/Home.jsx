@@ -305,7 +305,7 @@ function HeroCarousel({ onInquire }) {
   }, [emblaApi]);
 
   return (
-    <section className="relative w-full h-[560px] md:h-[680px] overflow-hidden" data-testid="hero-carousel">
+    <section className="relative w-full h-[520px] sm:h-[560px] md:h-[680px] overflow-hidden" data-testid="hero-carousel">
       <div className="embla w-full h-full overflow-hidden" ref={emblaRef}>
         <div className="embla__container flex h-full">
           {HERO_SLIDES.map((slide, i) => (
@@ -788,7 +788,7 @@ export default function Home() {
 
       <div className="bg-[#0A66C2]" data-testid="stats-bar">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
+          <div className="grid grid-cols-1 min-[380px]:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5 md:gap-8">
             {STATS.map((s, i) => (
               <div
                 key={s.label}
@@ -819,21 +819,21 @@ export default function Home() {
                 Fabricating Your Vision with Precision
               </h2>
 
-              <p className="text-slate-600 leading-7 mb-5">
+              <p className="text-slate-600 leading-7 mb-4">
                 DFAB Stainless System Pvt Ltd is an{" "}
                 <strong>ISO 9001:2015 certified</strong> fabrication company
                 established in 2018, located in the prime Peenya Industrial Area,
                 Bengaluru.
               </p>
 
-              <p className="text-slate-600 leading-7 mb-8">
+              <p className="text-slate-600 leading-7 mb-6">
                 With a 14000 sq-ft facility, a 5-ton crane,(GTAW, GMAW, MMAW) are Processed, and a highly skilled team, we provide end-to-end solutions in
                 equipment fabrication, high-pressure pipeline welding, and precision
                 machining.
               </p>
 
               {/* FEATURES */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
                 {[
                   "14000 sqft Operating Space",
                   "5 Ton Crane Facility",
@@ -859,17 +859,18 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* RIGHT IMAGE */}
-            <div className="md:col-span-7 relative min-h-[320px] md:min-h-0">
-              {/* IMAGE: matches the left content height on desktop */}
-              <img
-                src={aboutFactory}
-                alt="DFAB Factory"
-                className="rounded-2xl w-full h-[320px] md:absolute md:inset-0 md:h-full object-cover object-center shadow-3xl"
-              />
+            {/* RIGHT IMAGE - fills the full card height */}
+            <div className="md:col-span-7 relative h-[340px] md:h-auto md:self-stretch rounded-2xl bg-slate-50 border border-slate-100 shadow-3xl overflow-hidden">
+              <div className="absolute inset-[10px] flex items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white">
+                <img
+                  src={aboutFactory}
+                  alt="DFAB Factory"
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
 
               {/* 8+ BADGE (OUTSIDE LEFT BOTTOM) */}
-              <div className="absolute bottom-3 left-3 sm:bottom-3 sm:left-3 md:bottom-3 md:left-3 z-10 ...">
+              <div className="absolute bottom-3 left-3 z-10">
                 <div className="rounded-xl bg-[#0A66C2]/90 backdrop-blur-md text-white px-4 py-3 shadow-[0_10px_25px_rgba(0,0,0,0.25)] border border-white/20">
                   <div className="text-2xl sm:text-3xl font-bold font-['Chivo'] leading-none">
                     8+
@@ -1079,7 +1080,7 @@ export default function Home() {
             {/* LEFT: Strict fixed-ratio image grid */}
             <div className="reveal-left flex flex-col gap-4">
               {/* Row 1: Two equal 1:1 squares side by side */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-4">
                 <div
                   className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 relative"
                   style={{ aspectRatio: "1/1" }}
@@ -1148,7 +1149,7 @@ export default function Home() {
 
               <Link
                 to="/infrastructure"
-                className="inline-flex items-center gap-2 bg-[#0A66C2] text-white px-10 py-4 rounded-sm font-bold hover:bg-[#084e96] transition-all duration-300 shadow-lg hover:shadow-blue-500/20 hover:-translate-y-0.5"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-[#0A66C2] text-white px-6 sm:px-10 py-4 rounded-sm font-bold hover:bg-[#084e96] transition-all duration-300 shadow-lg hover:shadow-blue-500/20 hover:-translate-y-0.5"
               >
                 Explore Infrastructure <ArrowRight size={18} />
               </Link>
@@ -1186,7 +1187,7 @@ export default function Home() {
 
               <Link
                 to="/quality"
-                className="bg-white text-[#0A66C2] px-6 py-2.5 rounded-sm font-semibold text-sm hover:bg-blue-50 transition-all duration-300 hover:-translate-y-0.5 whitespace-nowrap"
+                className="bg-white text-[#0A66C2] px-5 sm:px-6 py-2.5 rounded-sm font-semibold text-sm hover:bg-blue-50 transition-all duration-300 hover:-translate-y-0.5 whitespace-normal sm:whitespace-nowrap text-center"
               >
                 View Certifications
               </Link>

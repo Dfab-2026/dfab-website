@@ -183,7 +183,7 @@ export default function ChatBot() {
     } catch {
       setMessages((prev) => [...prev, {
         role: "assistant",
-        text: "I'm having trouble connecting right now. Please WhatsApp us at +91 9187638186 for immediate help!",
+        text: "I'm having trouble connecting right now. Please WhatsApp us at +91 9908504466 for immediate help!",
       }]);
     } finally {
       setLoading(false);
@@ -198,7 +198,7 @@ export default function ChatBot() {
     <>
       {/* ── Proactive Bubble ── */}
       {showBubble && !open && (
-        <div className="fixed bottom-[5.5rem] right-7 z-50 max-w-[210px] chatbubble-enter" data-testid="chatbot-bubble">
+        <div className="fixed bottom-[5.5rem] right-3 sm:right-7 z-50 max-w-[calc(100vw-1.5rem)] sm:max-w-[210px] chatbubble-enter" data-testid="chatbot-bubble">
           <div className="bg-white border border-slate-200 rounded-2xl rounded-br-sm px-4 py-3 shadow-xl text-sm text-slate-700 font-medium relative leading-snug">
             {bubbleText}
             <button
@@ -230,7 +230,7 @@ export default function ChatBot() {
 
       {/* ── Chat Window ── */}
       <div
-        className={`fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col transition-all duration-300 origin-bottom-right ${open ? "scale-100 opacity-100" : "scale-75 opacity-0 pointer-events-none"}`}
+        className={`fixed bottom-3 left-3 right-3 sm:bottom-6 sm:left-auto sm:right-6 z-50 w-auto sm:w-[380px] sm:max-w-[calc(100vw-1.5rem)] bg-white rounded-2xl shadow-2xl border border-slate-100 flex flex-col transition-all duration-300 origin-bottom-right ${open ? "scale-100 opacity-100" : "scale-75 opacity-0 pointer-events-none"}`}
         style={{ height: "580px" }}
         data-testid="chatbot-window"
       >

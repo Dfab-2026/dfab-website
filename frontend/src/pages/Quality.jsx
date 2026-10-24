@@ -81,7 +81,7 @@ export default function Quality() {
   return (
     <main className="bg-white">
       {/* HEADER SECTION - Standardized */}
-      <div className="bg-[#0F172A] h-[260px] flex items-center px-4">
+      <div className="bg-[#0F172A] min-h-[240px] sm:min-h-[260px] flex items-center px-4 py-8">
         <div className="max-w-7xl mx-auto w-full">
           <span className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider">Standards & Compliance</span>
           <h1 className="text-4xl md:text-5xl font-bold text-white mt-2 font-['Chivo']">Quality & Certifications</h1>
@@ -168,7 +168,7 @@ Every product leaving our facility meets stringent quality standards. Our commit
       {/* Export Readiness */}
       <section className="py-16 md:py-20 bg-white" ref={exportRef}>
         <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="bg-gradient-to-r from-[#0A66C2] to-[#1565C0] rounded-md p-10 md:p-14 text-center reveal">
+          <div className="bg-gradient-to-r from-[#0A66C2] to-[#1565C0] rounded-md p-6 sm:p-10 md:p-14 text-center reveal">
             <Globe size={40} className="text-white/60 mx-auto mb-4" />
             <h2 className="text-2xl md:text-3xl font-bold text-white font-['Chivo'] mb-3">
               Open for Global Projects

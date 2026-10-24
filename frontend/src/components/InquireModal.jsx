@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { X, Phone, Calendar, Mail, MessageSquare } from "lucide-react";
 
-const WHATSAPP_NUM = "919187638186";
+const WHATSAPP_NUM = "919908504466";
 const EMPTY_FORM = { date: "", email: "", phone: "", message: "" };
 
 export default function InquireModal({ onClose }) {
@@ -57,14 +57,14 @@ export default function InquireModal({ onClose }) {
   const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center px-4" data-testid="inquire-modal-overlay">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 overflow-y-auto" data-testid="inquire-modal-overlay">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal Card */}
-      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden animate-scale-in" data-testid="inquire-modal">
+      <div className="relative w-full max-w-md max-h-[calc(100svh-1.5rem)] bg-white rounded-2xl shadow-2xl overflow-y-auto animate-scale-in my-auto" data-testid="inquire-modal">
         {/* Header */}
-        <div className="bg-[#0A66C2] px-7 py-6">
+        <div className="bg-[#0A66C2] px-5 sm:px-7 py-5 sm:py-6">
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-xl font-bold text-white font-['Chivo']">Inquire Now</h2>
@@ -83,7 +83,7 @@ export default function InquireModal({ onClose }) {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="px-7 py-6 space-y-5" data-testid="inquire-form">
+        <form onSubmit={handleSubmit} className="px-5 sm:px-7 py-5 sm:py-6 space-y-5" data-testid="inquire-form">
 
           {/* Schedule Date */}
           <div>

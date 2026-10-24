@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { 
   MapPin, 
   Phone, 
+  PhoneCall,
   Mail, 
   Facebook, 
   Instagram, 
@@ -202,10 +203,10 @@ export default function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-slate-800">
+        <div className="grid grid-cols-1 md:grid-cols-12 items-stretch gap-12 pb-12 border-b border-slate-800">
           
           {/* Brand Column */}
-<div className="md:col-span-5 relative ui-corners p-2">
+<div className="md:col-span-5 relative ui-corners flex flex-col p-2">
   <div className="mb-6">
     <Link to="/" className="flex items-center gap-4 group w-fit">
       <img
@@ -216,7 +217,7 @@ export default function Footer() {
 
       <div className="h-10 w-px bg-slate-500/40"></div>
 
-      <p className="text-[12px] md:text-[13px] text-slate-300 font-medium uppercase tracking-[0.18em] leading-none whitespace-nowrap">
+      <p className="text-[11px] sm:text-[12px] md:text-[13px] text-slate-300 font-medium uppercase tracking-[0.12em] sm:tracking-[0.18em] leading-snug whitespace-normal sm:whitespace-nowrap">
         Stainless System Pvt Ltd
         <sup className="text-[8px] text-white ml-1">TM</sup>
       </p>
@@ -231,6 +232,9 @@ export default function Footer() {
   <li>Customized engineering solutions for diverse industries</li>
   <li>Focus on quality, accuracy, and timely delivery</li>
   <li>Supporting global industries with reliable performance</li>
+  <li>ISO 9001:2015 certified quality management</li>
+  <li>Pressure vessel and industrial pipeline fabrication</li>
+  <li>Precision welding for stainless steel, aluminium, and carbon steel</li>
 </ul>
 
 <div className="flex flex-wrap gap-2 mb-8 pl-1">
@@ -246,21 +250,21 @@ export default function Footer() {
   
             
             {/* Social Links */}
-            <div className="flex flex-wrap gap-5 pt-2 pl-1">
+            <div className="mt-auto flex flex-nowrap gap-3 pt-2 pl-1">
               {[
                 { Icon: Facebook, url: "https://m.facebook.com/dfabsspl/" },
                 { Icon: Instagram, url: "https://www.instagram.com/dfabstainlesssystempvtltd_?igsh=MTZucXJ0c2d6YTJoMA==" },
                 { Icon: Youtube, url: "https://www.youtube.com/@dfabstainlesssystempvtltd8581" },
                 { Icon: Linkedin, url: "https://www.linkedin.com/company/dfab-stainless-system-pvt-ltd/" },
                 { Icon: Twitter, url: "https://twitter.com" },
-                { Icon: MessageCircle, url: "https://wa.me/919187638186" }
+                { Icon: MessageCircle, url: "https://wa.me/919908504466" }
               ].map((item, idx) => (
                 <a 
                   key={idx} 
                   href={item.url} 
                   target="_blank" 
                   rel="noreferrer" 
-                  className="w-11 h-11 rounded-lg flex items-center justify-center text-slate-400 control-btn outline-none"
+                  className="w-11 h-11 shrink-0 rounded-lg flex items-center justify-center text-slate-400 control-btn outline-none"
                 >
                   <item.Icon size={20} />
                 </a>
@@ -269,12 +273,12 @@ export default function Footer() {
           </div>
 
           {/* Site Navigation */}
-          <div className="md:col-span-3 pt-2">
+          <div className="md:col-span-3 flex flex-col pt-2">
             <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-6 flex items-center">
               <span className="w-2 h-2 bg-[#0A66C2] mr-3 rounded-sm shadow-[0_0_5px_#0A66C2]"></span>
               Navigation
             </h4>
-            <ul className="space-y-4">
+            <ul className="flex flex-1 flex-col justify-between space-y-4">
               {[
                 ["Home", "/"], ["About Us", "/about"], ["Capabilities", "/capabilities"],
                 ["Our Projects", "/projects"], ["Infrastructure", "/infrastructure"],
@@ -291,14 +295,14 @@ export default function Footer() {
           </div>
 
           {/* HQ & Contact */}
-          <div className="md:col-span-4 pt-2">
+          <div className="md:col-span-4 flex flex-col pt-2">
             <h4 className="text-white font-bold text-sm uppercase tracking-widest mb-6 flex items-center">
               <span className="w-2 h-2 bg-[#0A66C2] mr-3 rounded-sm shadow-[0_0_5px_#0A66C2]"></span>
               Global HQ
             </h4>
-            <ul className="space-y-3">
+            <ul className="flex flex-1 flex-col justify-between space-y-3">
               <li className="flex gap-4 items-start welding-sparkle-card p-3 rounded-lg cursor-default">
-                <div className="mt-1 p-2 rounded bg-slate-800/80 text-[#0A66C2] border border-slate-700/50">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-slate-800/80 text-[#0A66C2] border border-slate-700/50">
                   <MapPin size={18} />
                 </div>
                 <span className="text-sm text-slate-300 leading-relaxed pt-1">
@@ -306,15 +310,23 @@ export default function Footer() {
                 </span>
               </li>
               <li className="flex gap-4 items-center welding-sparkle-card p-3 rounded-lg group">
-                <div className="p-2 rounded bg-slate-800/80 text-[#0A66C2] border border-slate-700/50">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-slate-800/80 text-[#0A66C2] border border-slate-700/50">
                   <Phone size={18} />
                 </div>
-                <a href="tel:+91 9908504466" className="text-sm text-slate-300 font-bold tracking-wide outline-none group-hover:text-white transition-colors">
+                <a href="tel:+919908504466" className="text-sm text-slate-300 font-bold tracking-wide outline-none group-hover:text-white transition-colors">
                   +91 9908504466
                 </a>
               </li>
               <li className="flex gap-4 items-center welding-sparkle-card p-3 rounded-lg group">
-                <div className="p-2 rounded bg-slate-800/80 text-[#0A66C2] border border-slate-700/50">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-slate-800/80 text-[#0A66C2] border border-slate-700/50">
+                  <PhoneCall size={18} />
+                </div>
+                <a href="tel:08022110244" className="text-sm text-slate-300 font-bold tracking-wide outline-none group-hover:text-white transition-colors">
+                  080-22110244
+                </a>
+              </li>
+              <li className="flex gap-4 items-center welding-sparkle-card p-3 rounded-lg group">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-slate-800/80 text-[#0A66C2] border border-slate-700/50">
                   <Mail size={18} />
                 </div>
                 <a href="mailto:info@dfab.in" className="text-sm text-slate-300 font-medium outline-none group-hover:text-white transition-colors">
@@ -322,7 +334,7 @@ export default function Footer() {
                 </a>
               </li>
               <li className="flex gap-4 items-center welding-sparkle-card p-3 rounded-lg cursor-default">
-                <div className="p-2 rounded bg-slate-800/80 text-[#0A66C2] border border-slate-700/50">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-slate-800/80 text-[#0A66C2] border border-slate-700/50">
                   <Clock size={18} />
                 </div>
                 <span className="text-sm text-slate-300 font-medium tracking-wide">
@@ -334,16 +346,8 @@ export default function Footer() {
         </div>
 
         {/* Footer Bottom */}
-        <div className="pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold tracking-[0.15em] text-slate-500 uppercase">
+        <div className="pt-6 flex flex-col md:flex-row justify-start items-center gap-4 text-[10px] font-bold tracking-[0.15em] text-slate-500 uppercase">
           <p>© {currentYear} DFAB STAINLESS SYSTEM PVT LTD. ALL RIGHTS RESERVED.</p>
-          <div className="flex items-center gap-4 bg-slate-900/50 px-4 py-2 rounded-full border border-slate-800 shadow-inner">
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e] animate-pulse"></span>
-              <p className="text-slate-400 uppercase">System: Operational</p>
-            </div>
-            <span className="text-slate-700">|</span>
-            <p className="text-[#0A66C2] tracking-widest">Secured</p>
-          </div>
         </div>
       </div>
     </footer>

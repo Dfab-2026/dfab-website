@@ -74,7 +74,7 @@ export default function Navbar() {
       >
         <div className="w-full max-w-full flex items-center h-14 px-3 sm:px-4 md:px-8 overflow-hidden">
           <div className="flex-1 min-w-0">
-            <div className="max-w-7xl w-full mx-auto px-0 md:px-20 flex justify-start min-w-0">
+            <div className="max-w-7xl w-full mx-auto px-0 flex justify-start min-w-0">
               <Link to="/" className="flex items-center gap-2 group min-w-0">
                 <img
                   src={logo}
@@ -83,7 +83,7 @@ export default function Navbar() {
                 />
 
                 <div className="flex items-center border-l border-slate-300 pl-2 sm:pl-3 h-5 min-w-0">
-                  <span className="text-[9px] xs:text-[10px] sm:text-[12px] md:text-[14px] font-normal text-gray-700 uppercase tracking-wide whitespace-nowrap truncate">
+                  <span className="text-[9px] sm:text-[12px] md:text-[14px] font-normal text-gray-700 uppercase tracking-wide whitespace-nowrap truncate">
                     STAINLESS SYSTEM PVT LTD ™
                   </span>
                 </div>
@@ -180,8 +180,8 @@ export default function Navbar() {
       {showInquire && <InquireModal onClose={() => setShowInquire(false)} />}
 
       {showBrochure && (
-        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center px-4">
-          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 relative">
+        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-5 sm:p-6 relative my-auto">
             <button
               onClick={() => setShowBrochure(false)}
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-700"

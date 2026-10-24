@@ -247,7 +247,7 @@ export default function BlogAdmin() {
   return (
     <main className="min-h-screen bg-slate-50 pb-20">
       <section className="bg-[#0F172A] py-10 px-4 mb-10">
-        <div className="max-w-[1400px] mx-auto flex justify-between items-center">
+        <div className="max-w-[1400px] mx-auto flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold text-white font-['Chivo'] tracking-tight">
               System Console
@@ -268,8 +268,8 @@ export default function BlogAdmin() {
       <section className="max-w-[1400px] mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-[450px_1fr] gap-10 items-stretch">
           {/* LEFT SIDE: IDLE FORM (No Scroll) */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[850px]">
-            <div className="p-8 border-b border-slate-100 bg-white">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-auto lg:h-[850px]">
+            <div className="p-5 sm:p-6 md:p-8 border-b border-slate-100 bg-white">
               <div className="flex items-center gap-3 mb-1">
                 <div className="p-2 bg-blue-50 rounded-lg text-[#0A66C2]">
                   <PlusCircle size={20} />
@@ -283,7 +283,7 @@ export default function BlogAdmin() {
               </p>
             </div>
 
-            <form onSubmit={handleSave} className="p-8 space-y-4 flex-grow">
+            <form onSubmit={handleSave} className="p-5 sm:p-6 md:p-8 space-y-4 flex-grow">
               <div>
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">
                   Title *
@@ -310,7 +310,7 @@ export default function BlogAdmin() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 block">
                     Category
@@ -429,8 +429,8 @@ export default function BlogAdmin() {
           </div>
 
           {/* RIGHT SIDE: SCROLLABLE DATABASE */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[850px]">
-            <div className="p-8 border-b border-slate-100 bg-white flex justify-between items-center">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-auto lg:h-[850px]">
+            <div className="p-5 sm:p-6 md:p-8 border-b border-slate-100 bg-white flex justify-between items-center">
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <div className="p-2 bg-amber-50 rounded-lg text-amber-600">
@@ -454,7 +454,7 @@ export default function BlogAdmin() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-8 bg-slate-50/50 custom-scrollbar">
+            <div className="flex-1 lg:overflow-y-auto p-5 sm:p-6 md:p-8 bg-slate-50/50 custom-scrollbar">
               <div className="grid grid-cols-1 gap-6">
                 {posts.map((post) => (
                   <div

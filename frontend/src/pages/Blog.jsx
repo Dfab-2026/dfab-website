@@ -6,6 +6,7 @@ import { getApiBase } from "../utils/backendApi";
 
 const API = getApiBase();
 
+
 const CATEGORIES = ["All", "Fabrication", "Welding", "Industry News", "Quality", "Projects"];
 
 export default function Blog() {
@@ -17,19 +18,32 @@ export default function Blog() {
   const loadPosts = useCallback(async () => {
     setLoading(true);
     setError("");
-    try {
-      const response = await axios.get(`${API}/blog/posts`, {
-        headers: { Accept: "application/json", "Cache-Control": "no-cache" },
-        params: { _ts: Date.now() },
-      });
-      setPosts(Array.isArray(response.data) ? response.data : []);
-    } catch (err) {
-      console.error("Failed to load blog posts from MongoDB:", err);
-      setPosts([]);
-      setError("Could not load published posts from the database.");
-    } finally {
-      setLoading(false);
+
+    let lastError = null;
+
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const response = await axios.get(`${API}/blog/posts`, {
+          headers: { Accept: "application/json", "Cache-Control": "no-cache" },
+          params: { _ts: Date.now() },
+          timeout: 75000,
+        });
+
+        setPosts(Array.isArray(response.data) ? response.data : []);
+        setLoading(false);
+        return;
+      } catch (err) {
+        lastError = err;
+        if (attempt === 0) {
+          await new Promise((resolve) => window.setTimeout(resolve, 1500));
+        }
+      }
     }
+
+    console.error("Failed to load blog posts from MongoDB:", lastError);
+    setPosts([]);
+    setError("Could not load published posts from the database.");
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -64,7 +78,7 @@ export default function Blog() {
       </div>
 
       {/* HEADER SECTION */}
-      <section className="bg-[#0F172A] h-[260px] flex items-center px-4">
+      <section className="bg-[#0F172A] min-h-[240px] sm:min-h-[260px] flex items-center px-4 py-8">
         <div className="max-w-7xl mx-auto w-full">
           <span className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider">Knowledge Hub</span>
           <h1 className="text-4xl md:text-5xl font-bold text-white mt-2 font-['Chivo']">Technical Blog</h1>
@@ -104,7 +118,7 @@ export default function Blog() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="animate-pulse bg-slate-50 h-[550px] rounded-xl" />
+                <div key={i} className="animate-pulse bg-slate-50 min-h-[420px] md:h-[550px] rounded-xl" />
               ))}
             </div>
           ) : error ? (
@@ -119,7 +133,7 @@ export default function Blog() {
               </button>
             </div>
           ) : filtered.length === 0 ? (
-            <div className="border border-slate-200 bg-slate-50 rounded-xl p-10 text-center">
+            <div className="border border-slate-200 bg-slate-50 rounded-xl p-6 sm:p-8 md:p-10 text-center">
               <p className="text-sm font-semibold text-slate-600">
                 No published blog posts are available in the database.
               </p>
@@ -129,7 +143,7 @@ export default function Blog() {
               {filtered.map((post) => (
                 <article
                   key={post.id}
-                  className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col h-[550px]"
+                  className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-500 flex flex-col min-h-[500px] md:h-[550px]"
                 >
                   {/* Fixed Image Area */}
                   <div className="relative h-44 overflow-hidden shrink-0 bg-slate-100">

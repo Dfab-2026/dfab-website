@@ -23,8 +23,6 @@ function normalizePublished(project = {}) {
     raw = project.status;
   }
 
-  // Old DFAB project records pre-date the published flag. Those records were
-  // created as public portfolio entries, so missing publication state means live.
   if (raw == null) return true;
   if (typeof raw === "boolean") return raw;
   if (typeof raw === "number") return raw !== 0;
@@ -74,7 +72,32 @@ export function normalizeProjects(payload) {
   return list.map(normalizeProject);
 }
 
-async function fetchJson(url, { signal, timeoutMs = 30000, headers = {} } = {}) {
+function sleep(ms, signal) {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      const error = new Error("Request aborted");
+      error.name = "AbortError";
+      reject(error);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (signal) signal.removeEventListener("abort", onAbort);
+      resolve();
+    }, ms);
+
+    const onAbort = () => {
+      clearTimeout(timer);
+      const error = new Error("Request aborted");
+      error.name = "AbortError";
+      reject(error);
+    };
+
+    if (signal) signal.addEventListener("abort", onAbort, { once: true });
+  });
+}
+
+async function fetchJson(url, { signal, timeoutMs = 75000, headers = {} } = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -97,7 +120,9 @@ async function fetchJson(url, { signal, timeoutMs = 30000, headers = {} } = {}) 
     });
 
     if (!response.ok) {
-      throw new Error(`Projects request failed with status ${response.status}`);
+      const error = new Error(`Projects request failed with status ${response.status}`);
+      error.status = response.status;
+      throw error;
     }
 
     return await response.json();
@@ -108,15 +133,26 @@ async function fetchJson(url, { signal, timeoutMs = 30000, headers = {} } = {}) 
 }
 
 /**
- * Public Projects page data source.
- * MongoDB-backed /api/projects is the only source. No localStorage, hardcoded
- * cards, seed data, or frontend fallback projects are used here.
+ * Public Projects data source.
+ * MongoDB-backed /api/projects is the only source. No localStorage, seed data,
+ * hardcoded cards or automatic database cleanup is used here.
  */
-export async function fetchPublishedProjects({ signal, timeoutMs = 30000 } = {}) {
-  const payload = await fetchJson(`${getProjectsApiBase()}/projects?_ts=${Date.now()}`, {
-    signal,
-    timeoutMs,
-  });
+export async function fetchPublishedProjects({ signal, timeoutMs = 75000 } = {}) {
+  const url = `${getProjectsApiBase()}/projects?_ts=${Date.now()}`;
+  let lastError = null;
 
-  return normalizeProjects(payload).filter((project) => project.published !== false);
+  // Two same-origin attempts protect against a sleeping Render instance while
+  // avoiding the direct-Render/CORS split that previously made the cards vanish.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const payload = await fetchJson(url, { signal, timeoutMs });
+      return normalizeProjects(payload).filter((project) => project.published !== false);
+    } catch (error) {
+      if (error?.name === "AbortError" || signal?.aborted) throw error;
+      lastError = error;
+      if (attempt === 0) await sleep(1500, signal);
+    }
+  }
+
+  throw lastError || new Error("Projects API is unavailable");
 }

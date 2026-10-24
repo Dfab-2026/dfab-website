@@ -8,13 +8,13 @@ import {
   Eye,
   LogOut,
   RefreshCw,
+  Settings,
   Users,
 } from "lucide-react";
 import { analyticsRequest } from "../utils/analyticsApi";
 
 const ADMIN_SESSION_KEY = "dfab_admin_logged_in";
 const ADMIN_TOKEN_KEY = "dfab_admin_token";
-const ANALYTICS_CACHE_PREFIX = "dfab_analytics_summary_v3:";
 const getToken = () => localStorage.getItem(ADMIN_TOKEN_KEY) || "";
 
 const EMPTY_SUMMARY = {
@@ -30,7 +30,6 @@ const EMPTY_SUMMARY = {
   trend_views: [],
   trend_title: "All Time Traffic",
   recent_brochure_downloads: [],
-  recent_views: [],
 };
 
 const now = new Date();
@@ -112,41 +111,25 @@ export default function AdminAnalytics() {
     if (appliedFilter.mode === "month" && appliedFilter.value) params.set("month", appliedFilter.value);
     if (appliedFilter.mode === "year" && appliedFilter.value) params.set("year", appliedFilter.value);
 
-    const cacheKey = `${ANALYTICS_CACHE_PREFIX}${params.toString()}`;
-    let hasCachedSummary = false;
-
-    // Instant paint on repeat visits/filter selections while a fresh MongoDB
-    // summary is refreshed in the background.
     try {
-      const cached = JSON.parse(sessionStorage.getItem(cacheKey) || "null");
-      if (cached && cached.data) {
-        hasCachedSummary = true;
-        setSummary({ ...EMPTY_SUMMARY, ...cached.data });
-        setLastUpdated(cached.savedAt ? new Date(cached.savedAt) : new Date());
-      }
-    } catch (_) {
-      sessionStorage.removeItem(cacheKey);
-    }
-
-    try {
-      if (!hasCachedSummary) setLoading(true);
+      setLoading(true);
       setError("");
       const data = await analyticsRequest(`/admin/analytics/summary?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+        timeoutMs: 75000,
       });
-      const nextSummary = { ...EMPTY_SUMMARY, ...(data || {}) };
-      setSummary(nextSummary);
-      const updatedAt = new Date();
-      setLastUpdated(updatedAt);
-      sessionStorage.setItem(
-        cacheKey,
-        JSON.stringify({ data: nextSummary, savedAt: updatedAt.toISOString() })
-      );
+      setSummary({ ...EMPTY_SUMMARY, ...(data || {}) });
+      setLastUpdated(new Date());
     } catch (requestError) {
       if (requestError?.status === 401) {
         handleUnauthorized();
-      } else if (!hasCachedSummary) {
-        setError("Could not load analytics. Please confirm the backend is running.");
+      } else if (requestError?.status === 408) {
+        setError("Analytics is taking longer than expected. The backend may still be starting; please retry.");
+      } else if (requestError?.status) {
+        setError(`Analytics API returned error ${requestError.status}. Please retry.`);
+      } else {
+        setError("Could not reach the analytics API. Check that the backend URL is reachable, then retry.");
       }
     } finally {
       setLoading(false);
@@ -176,6 +159,7 @@ export default function AdminAnalytics() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
+        timeoutMs: 75000,
       });
 
       localStorage.setItem(ADMIN_SESSION_KEY, "true");
@@ -264,74 +248,43 @@ export default function AdminAnalytics() {
 
   if (!isLoggedIn) {
     return (
-      <main className="relative min-h-screen overflow-hidden bg-[#07101f] flex items-center justify-center px-4 py-16">
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(59,130,246,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,.08) 1px, transparent 1px)",
-            backgroundSize: "42px 42px",
-          }}
-          aria-hidden="true"
-        />
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-blue-600/20 blur-3xl" aria-hidden="true" />
-        <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-cyan-500/10 blur-3xl" aria-hidden="true" />
-
-        <div className="relative w-full max-w-md overflow-hidden rounded-[28px] border border-white/10 bg-white shadow-2xl shadow-black/30">
-          <div className="bg-gradient-to-br from-[#0F172A] via-[#111c31] to-[#0A66C2] p-8 text-white">
-            <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center mb-6 backdrop-blur-sm">
-              <BarChart3 size={24} />
+      <main className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 border border-slate-200">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-blue-50 text-[#0A66C2] rounded-full flex items-center justify-center mx-auto mb-4">
+              <Settings size={32} />
             </div>
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-blue-200/80">DFAB Admin</p>
-            <h1 className="text-3xl font-bold font-['Chivo'] mt-2">Site Analytics</h1>
-            <p className="text-sm text-blue-100/70 mt-2 leading-relaxed">
-              Website traffic, page performance and brochure lead activity in one place.
-            </p>
+            <h1 className="text-2xl font-bold font-['Chivo'] text-slate-900">
+              Analytics Admin Login
+            </h1>
           </div>
 
-          <div className="p-8 bg-white">
-            <p className="text-sm text-slate-500 mb-6">
-              Use the same admin password as the Projects dashboard.
-            </p>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Enter Admin Password"
+              autoComplete="current-password"
+              className="w-full border border-slate-300 rounded-xl px-4 py-4 outline-none focus:ring-2 focus:ring-[#0A66C2] transition-all"
+            />
+            {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+            <button
+              type="submit"
+              disabled={loading || !password}
+              className="w-full bg-[#0A66C2] text-white py-4 rounded-xl font-bold hover:bg-[#084e96] transition-all disabled:opacity-60"
+            >
+              {loading ? "Logging in..." : "Login to Dashboard"}
+            </button>
+          </form>
 
-            <form onSubmit={handleLogin} className="space-y-4">
-              <label className="block">
-                <span className="block text-[11px] font-black uppercase tracking-widest text-slate-400 mb-2">
-                  Admin password
-                </span>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  placeholder="Enter password"
-                  autoComplete="current-password"
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3.5 text-sm outline-none transition-all focus:border-[#0A66C2] focus:ring-4 focus:ring-blue-100"
-                />
-              </label>
-
-              {error && (
-                <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600">
-                  {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading || !password}
-                className="w-full bg-[#0A66C2] text-white py-3.5 rounded-xl font-bold hover:bg-[#084e96] hover:shadow-lg hover:shadow-blue-200/60 transition-all disabled:opacity-60"
-              >
-                {loading ? "Logging in..." : "Login to Analytics"}
-              </button>
-            </form>
-
-            <div className="mt-6 pt-6 border-t border-slate-100 text-center">
-              <Link
-                to="/about"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[#0A66C2] transition-colors"
-              >
-                <ArrowLeft size={16} /> Back to About
-              </Link>
-            </div>
+          <div className="mt-6 pt-6 border-t border-slate-100 text-center">
+            <Link
+              to="/about"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[#0A66C2] transition-colors"
+            >
+              <ArrowLeft size={16} /> Back to About
+            </Link>
           </div>
         </div>
       </main>
@@ -385,7 +338,7 @@ export default function AdminAnalytics() {
           }}
           aria-hidden="true"
         />
-        <div className="absolute top-0 right-0 w-[520px] h-[520px] rounded-full bg-blue-600/15 blur-3xl" aria-hidden="true" />
+        <div className="absolute top-0 right-0 w-[320px] h-[320px] sm:w-[520px] sm:h-[520px] rounded-full bg-blue-600/15 blur-3xl" aria-hidden="true" />
 
         <div className="relative max-w-[1400px] mx-auto flex flex-col lg:flex-row lg:items-end justify-between gap-7">
           <div>
@@ -617,7 +570,7 @@ export default function AdminAnalytics() {
             </div>
 
             <div className="p-6 md:p-7">
-              <div className="h-[360px] rounded-2xl bg-gradient-to-b from-slate-50 to-white border border-slate-200 p-4 md:p-5">
+              <div className="h-[300px] sm:h-[340px] md:h-[360px] rounded-2xl bg-gradient-to-b from-slate-50 to-white border border-slate-200 p-4 md:p-5">
                 {trendViews.length === 0 ? (
                   <div className="w-full h-full flex items-center justify-center text-sm text-slate-400">
                     No traffic data yet.
@@ -742,7 +695,7 @@ export default function AdminAnalytics() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[880px] text-left">
+            <table className="w-full min-w-[760px] md:min-w-[880px] text-left">
               <thead className="bg-slate-50/80 border-b border-slate-100">
                 <tr>
                   {['Contact', 'Email', 'Mobile', 'Source Page', 'Downloaded'].map((heading) => (
@@ -777,7 +730,7 @@ export default function AdminAnalytics() {
                           {lead.path || '/'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">{formatDate(lead.created_at)}</td>
+                      <td className="px-4 md:px-6 py-4 text-sm text-slate-500 whitespace-nowrap">{formatDate(lead.created_at)}</td>
                     </tr>
                   ))
                 )}

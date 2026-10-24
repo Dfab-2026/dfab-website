@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, Settings, Target, RefreshCw } from "lucide-react";
 import { SERVICES as ALL_SERVICES } from "./Services";
-import CinematicScrollSequence from "../components/CinematicScrollSequence";
+import projectProductPlaceholder from "../assets/images/project-product-placeholder.webp";
 import { fetchPublishedProjects } from "../utils/projectsApi";
 
 export default function Projects() {
@@ -24,7 +24,7 @@ export default function Projects() {
       try {
         const databaseProjects = await fetchPublishedProjects({
           signal: controller.signal,
-          timeoutMs: 35000,
+          timeoutMs: 75000,
         });
         if (controller.signal.aborted) return;
         setProjects(databaseProjects);
@@ -106,7 +106,7 @@ export default function Projects() {
       {(isFullPage || isProjectsOnly) && (
         <>
           {/* HEADER SECTION - Standardized */}
-          <div className="bg-[#0F172A] h-[260px] flex items-center px-4">
+          <div className="bg-[#0F172A] min-h-[240px] sm:min-h-[260px] flex items-center px-4 py-8">
             <div className="max-w-7xl mx-auto w-full">
               <span className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider">
                 Portfolio
@@ -131,8 +131,18 @@ export default function Projects() {
           {/* SPACING BETWEEN PROJECTS HEADER AND VIDEO */}
           <div className="h-10 md:h-14 lg:h-16 bg-white" aria-hidden="true" />
 
-          {/* CINEMATIC PRODUCT MOTION - image-sequence scroll renderer */}
-          <CinematicScrollSequence />
+          {/* STATIC PRODUCT VISUAL - temporary replacement for the video area */}
+          <section className="bg-[#07111f] py-6 sm:py-8 md:py-10">
+            <div className="max-w-7xl mx-auto px-4 md:px-8">
+              <div className="relative overflow-hidden rounded-2xl border border-slate-700/60 bg-slate-950 shadow-2xl">
+                <img
+                  src={projectProductPlaceholder}
+                  alt="DFAB fabricated stainless steel product"
+                  className="block w-full max-h-[72vh] object-contain object-center bg-black"
+                />
+              </div>
+            </div>
+          </section>
 
           {/* PROJECTS GRID */}
           <section id="projects-section" className="py-16 md:py-24 bg-white">
@@ -142,7 +152,7 @@ export default function Projects() {
                   {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
-                      className="bg-white border border-slate-200 rounded-xl h-[520px] animate-pulse"
+                      className="bg-white border border-slate-200 rounded-xl min-h-[420px] md:h-[520px] animate-pulse"
                     />
                   ))}
                 </div>
@@ -174,7 +184,7 @@ export default function Projects() {
                   {processedProjects.map((p) => (
                     <div
                       key={p.id}
-                      className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col h-[520px]"
+                      className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col min-h-[480px] md:h-[520px]"
                     >
                       {/* IMAGE BOX WITH CLEAR BLUE TAG */}
                       <div className="relative overflow-hidden h-48 shrink-0 bg-slate-100">
@@ -233,7 +243,7 @@ export default function Projects() {
 
               {/* CTA SECTION */}
               <div className="mt-16">
-                <div className="w-full bg-[#0A66C2] rounded-xl p-10 text-center shadow-lg">
+                <div className="w-full bg-[#0A66C2] rounded-xl p-6 sm:p-8 md:p-10 text-center shadow-lg">
                   <h2 className="text-2xl font-bold text-white mb-3 font-['Chivo']">
                     Have a Project in Mind?
                   </h2>
@@ -253,7 +263,7 @@ export default function Projects() {
       {(isFullPage || isServicesOnly) && (
         <>
           {/* ✅ ADDED ID */}
-          <div id="services-header" className="bg-[#0F172A] h-[260px] flex items-center px-4">
+          <div id="services-header" className="bg-[#0F172A] min-h-[240px] sm:min-h-[260px] flex items-center px-4 py-8">
             <div className="max-w-7xl mx-auto w-full">
               <span className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider">
                 Our Services
@@ -281,7 +291,7 @@ export default function Projects() {
                 {ALL_SERVICES.map((service) => (
                   <div
                     key={service.title}
-                    className="group bg-white border border-slate-200 rounded-2xl overflow-hidden h-[420px] flex flex-col hover:shadow-xl transition-all duration-500"
+                    className="group bg-white border border-slate-200 rounded-2xl overflow-hidden min-h-[400px] md:h-[420px] flex flex-col hover:shadow-xl transition-all duration-500"
                   >
                     <div className="h-48 shrink-0 overflow-hidden">
                       <img

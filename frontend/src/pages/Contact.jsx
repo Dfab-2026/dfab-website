@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   MapPin,
   Phone,
+  PhoneCall,
   Mail,
   MessageCircle,
   Send,
@@ -83,7 +84,7 @@ export default function Contact() {
   return (
     <main className="bg-white">
       {/* HEADER SECTION - Standardized */}
-      <div className="bg-[#0F172A] h-[260px] flex items-center px-4">
+      <div className="bg-[#0F172A] min-h-[240px] sm:min-h-[260px] flex items-center px-4 py-8">
         <div className="max-w-7xl mx-auto w-full">
           <span className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider">Get In Touch</span>
           <h1 className="text-4xl md:text-5xl font-bold text-white mt-2 font-['Chivo']">Contact Us</h1>
@@ -102,8 +103,8 @@ export default function Contact() {
             {/* CONTACT DETAILS */}
             <div className="lg:col-span-2 group relative h-full">
               <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-br from-[#0A66C2]/30 via-sky-300/20 to-slate-200/70 opacity-100 transition-opacity duration-300" />
-              <div className="relative h-full rounded-2xl border border-slate-200/80 bg-white p-8 shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_18px_45px_rgba(15,23,42,0.10)]">
-                <div className="space-y-7">
+              <div className="relative flex h-full flex-col rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 md:p-8 shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_18px_45px_rgba(15,23,42,0.10)]">
+                <div className="flex-1 space-y-5">
                   <div>
                     <span className="text-xs font-semibold text-[#0A66C2] uppercase tracking-[0.18em]">
                       Reach Us
@@ -117,9 +118,9 @@ export default function Contact() {
                     </p>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="group/item flex items-start gap-4 rounded-xl border border-slate-200 bg-slate-50/80 p-4 transition-all duration-300 hover:border-[#93C5FD] hover:bg-white hover:shadow-sm">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] transition-transform duration-300 group-hover/item:scale-105">
+                  <div className="space-y-3">
+                    <div className="group/item flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-3 transition-all duration-300 hover:border-[#93C5FD] hover:bg-white hover:shadow-sm">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] transition-transform duration-300 group-hover/item:scale-105">
                         <MapPin size={18} />
                       </div>
                       <div>
@@ -133,8 +134,8 @@ export default function Contact() {
                       </div>
                     </div>
 
-                    <div className="group/item flex items-start gap-4 rounded-xl border border-slate-200 bg-slate-50/80 p-4 transition-all duration-300 hover:border-[#93C5FD] hover:bg-white hover:shadow-sm">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] transition-transform duration-300 group-hover/item:scale-105">
+                    <div className="group/item flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-3 transition-all duration-300 hover:border-[#93C5FD] hover:bg-white hover:shadow-sm">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] transition-transform duration-300 group-hover/item:scale-105">
                         <Phone size={18} />
                       </div>
                       <div>
@@ -142,7 +143,7 @@ export default function Contact() {
                           Call Us
                         </h4>
                         <a
-                          href="tel:+91 9908504466"
+                          href="tel:+919908504466"
                           className="text-sm text-[#0A66C2] hover:underline mt-1 inline-block"
                         >
                           +91 9908504466
@@ -150,8 +151,25 @@ export default function Contact() {
                       </div>
                     </div>
 
-                    <div className="group/item flex items-start gap-4 rounded-xl border border-slate-200 bg-slate-50/80 p-4 transition-all duration-300 hover:border-[#93C5FD] hover:bg-white hover:shadow-sm">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] transition-transform duration-300 group-hover/item:scale-105">
+                    <div className="group/item flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-3 transition-all duration-300 hover:border-[#93C5FD] hover:bg-white hover:shadow-sm">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] transition-transform duration-300 group-hover/item:scale-105">
+                        <PhoneCall size={18} />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900">
+                          Landline
+                        </h4>
+                        <a
+                          href="tel:08022110244"
+                          className="text-sm text-[#0A66C2] hover:underline mt-1 inline-block"
+                        >
+                          080-22110244
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="group/item flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-3 transition-all duration-300 hover:border-[#93C5FD] hover:bg-white hover:shadow-sm">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] transition-transform duration-300 group-hover/item:scale-105">
                         <Mail size={18} />
                       </div>
                       <div>
@@ -167,8 +185,8 @@ export default function Contact() {
                       </div>
                     </div>
 
-                    <div className="group/item flex items-start gap-4 rounded-xl border border-slate-200 bg-slate-50/80 p-4 transition-all duration-300 hover:border-[#93C5FD] hover:bg-white hover:shadow-sm">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] transition-transform duration-300 group-hover/item:scale-105">
+                    <div className="group/item flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-3 transition-all duration-300 hover:border-[#93C5FD] hover:bg-white hover:shadow-sm">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0A66C2]/10 text-[#0A66C2] transition-transform duration-300 group-hover/item:scale-105">
                         <MessageCircle size={18} />
                       </div>
                       <div>
@@ -176,21 +194,21 @@ export default function Contact() {
                           WhatsApp
                         </h4>
                         <a
-                          href="https://api.whatsapp.com/send?phone=919187638186"
+                          href="https://api.whatsapp.com/send?phone=919908504466"
                           target="_blank"
                           rel="noreferrer"
                           className="text-sm text-[#0A66C2] hover:underline mt-1 inline-block"
                         >
-                          +91 9187638186
+                          +91 9908504466
                         </a>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-8">
+                <div className="mt-auto pt-5">
                   <a
-                    href="https://api.whatsapp.com/send?phone=919187638186"
+                    href="https://api.whatsapp.com/send?phone=919908504466"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 py-3.5 font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#1fb457] hover:shadow-md"
@@ -206,7 +224,7 @@ export default function Contact() {
             {/* FORM */}
             <div className="lg:col-span-3 group relative h-full">
               <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-br from-slate-200 via-[#0A66C2]/20 to-sky-200/40 opacity-100 transition-opacity duration-300" />
-              <div className="relative h-full rounded-2xl border border-slate-200/80 bg-white p-8 shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_18px_45px_rgba(15,23,42,0.10)]">
+              <div className="relative flex h-full flex-col rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 md:p-8 shadow-[0_10px_30px_rgba(15,23,42,0.06)] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_18px_45px_rgba(15,23,42,0.10)]">
                 <div className="mb-6">
                   <span className="text-xs font-semibold text-[#0A66C2] uppercase tracking-[0.18em]">
                     Inquiry Form
@@ -237,7 +255,7 @@ export default function Contact() {
                   </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="flex flex-1 flex-col gap-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <input
                       name="name"
@@ -304,7 +322,7 @@ export default function Contact() {
                     />
                     <label
                       htmlFor="file-upload"
-                      className="flex min-h-[102px] w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-600 transition-all duration-300 hover:border-[#0A66C2] hover:bg-[#EFF6FF]"
+                      className="flex min-h-[136px] w-full cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-600 transition-all duration-300 hover:border-[#0A66C2] hover:bg-[#EFF6FF]"
                     >
                       <Paperclip size={16} />
                       {file ? (
@@ -320,7 +338,7 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0A66C2] px-5 py-3.5 font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#084e96] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+                    className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0A66C2] px-5 py-3.5 font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#084e96] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     <Send size={16} />
                     {loading ? "Sending..." : "Send Message"}

@@ -9,6 +9,13 @@ const ORGANIZATION_SCHEMA = {
   name: "DFAB Stainless System Pvt Ltd",
   url: SITE_URL,
   logo: DEFAULT_OG_IMAGE,
+  telephone: "+91 9908504466",
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+91 9908504466",
+    contactType: "customer service",
+    areaServed: "IN",
+  },
   address: {
     "@type": "PostalAddress",
     streetAddress: "No: 3B/415, No-8 KIADB Main Road, Peenya Industrial Area",

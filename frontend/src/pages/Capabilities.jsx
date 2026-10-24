@@ -108,10 +108,10 @@ const RD_ROLES = [
 function CapabilityCard({ cap }) {
   return (
     <div className="h-full bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-[#0A66C2]/30 transition-all duration-300 flex flex-col overflow-hidden reveal group">
-      <div className="p-7 lg:p-8 flex flex-col h-full">
+      <div className="p-5 sm:p-7 lg:p-8 flex flex-col h-full">
         
         {/* Header - Fixed Height for alignment */}
-        <div className="flex items-start gap-5 h-[80px] mb-4">
+        <div className="flex items-start gap-4 sm:gap-5 min-h-[80px] sm:h-[80px] mb-4">
           {cap.icon && (
             <div className="w-16 h-16 bg-blue-50 rounded-xl flex items-center justify-center text-[#0A66C2] shrink-0 group-hover:bg-[#0A66C2] group-hover:text-white transition-colors duration-300">
               {cap.icon}
@@ -128,7 +128,7 @@ function CapabilityCard({ cap }) {
         </div>
 
         {/* Description - Fixed Height to keep list start point equal */}
-        <div className="h-[90px] mb-6">
+        <div className="min-h-[90px] sm:h-[90px] mb-6">
           <p className="text-base lg:text-[17px] text-slate-600 leading-relaxed line-clamp-3">
             {cap.desc}
           </p>
@@ -143,7 +143,7 @@ function CapabilityCard({ cap }) {
             {cap.keyCapabilities.map((k, index) => (
               <li
                 key={index}
-                className="text-[15px] lg:text-base text-slate-700 leading-tight flex items-start gap-3 h-[45px]"
+                className="text-[15px] lg:text-base text-slate-700 leading-tight flex items-start gap-3 min-h-[45px] sm:h-[45px]"
               >
                 <CheckCircle size={16} className="text-[#0A66C2] mt-0.5 shrink-0" />
                 <span className="line-clamp-2">{k}</span>
@@ -157,7 +157,7 @@ function CapabilityCard({ cap }) {
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
             Applications
           </p>
-          <div className="flex flex-wrap gap-2 h-[55px] content-start overflow-hidden">
+          <div className="flex flex-wrap gap-2 min-h-[55px] sm:h-[55px] content-start sm:overflow-hidden">
             {cap.applications.map((a, index) => (
               <span
                 key={index}
@@ -181,7 +181,7 @@ export default function Capabilities() {
   return (
     <main className="bg-white">
       {/* HEADER SECTION */}
-      <section className="bg-[#0F172A] h-[260px] flex items-center px-4">
+      <section className="bg-[#0F172A] min-h-[240px] sm:min-h-[260px] flex items-center px-4 py-8">
         <div className="max-w-7xl mx-auto w-full">
           <span className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider">What We Do</span>
           <h1 className="text-4xl md:text-5xl font-bold text-white mt-2 font-['Chivo']">

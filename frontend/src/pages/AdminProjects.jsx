@@ -312,7 +312,7 @@ export default function AdminProjects() {
   return (
     <main className="min-h-screen bg-slate-50 pb-20">
       <section className="bg-[#0F172A] py-10 px-4 mb-10">
-        <div className="max-w-[1400px] mx-auto flex justify-between items-center">
+        <div className="max-w-[1400px] mx-auto flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold text-white font-['Chivo'] tracking-tight">
               System Console
@@ -334,11 +334,11 @@ export default function AdminProjects() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
           {/* LEFT SIDE: FORM (ADD/EDIT) */}
           <div
-            className={`bg-white rounded-3xl border transition-all duration-500 shadow-sm overflow-hidden flex flex-col h-[850px] ${
+            className={`bg-white rounded-3xl border transition-all duration-500 shadow-sm overflow-hidden flex flex-col h-auto lg:h-[850px] ${
               editingId ? "border-amber-400 ring-2 ring-amber-100" : "border-slate-200"
             }`}
           >
-            <div className="p-8 border-b border-slate-100 bg-white flex justify-between items-center">
+            <div className="p-5 sm:p-6 md:p-8 border-b border-slate-100 bg-white flex justify-between items-center">
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <div
@@ -370,7 +370,7 @@ export default function AdminProjects() {
 
             <form
               onSubmit={handleSubmit}
-              className="p-8 space-y-6 flex-grow overflow-y-auto custom-scrollbar"
+              className="p-5 sm:p-6 md:p-8 space-y-6 flex-grow overflow-y-auto custom-scrollbar"
             >
               <div className="space-y-4">
                 <div>
@@ -489,8 +489,8 @@ export default function AdminProjects() {
           </div>
 
           {/* RIGHT SIDE: SCROLLABLE DATABASE */}
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[850px]">
-            <div className="p-8 border-b border-slate-100 bg-white flex justify-between items-center">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-auto lg:h-[850px]">
+            <div className="p-5 sm:p-6 md:p-8 border-b border-slate-100 bg-white flex justify-between items-center">
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <div className="p-2 bg-amber-50 rounded-lg text-amber-600">
@@ -510,7 +510,7 @@ export default function AdminProjects() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-8 bg-slate-50/50 custom-scrollbar">
+            <div className="flex-1 lg:overflow-y-auto p-5 sm:p-6 md:p-8 bg-slate-50/50 custom-scrollbar">
               {projectsError && (
                 <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 flex items-center justify-between gap-4">
                   <span>{projectsError}</span>

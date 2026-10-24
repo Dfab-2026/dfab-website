@@ -606,3 +606,46 @@ textarea {
         overflow-x: hidden;
     }
 }
+
+/* =========================
+   RESPONSIVE ALIGNMENT SAFETY
+   Layout-only safeguards for phones, tablets, desktops and wide screens.
+========================= */
+html, body, #root, .App {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+main, section, header, footer, nav {
+    min-width: 0;
+}
+
+img, video, canvas, svg {
+    max-width: 100%;
+}
+
+h1, h2, h3, h4, p, li, a, button, label, span {
+    overflow-wrap: break-word;
+}
+
+input, select, textarea, button {
+    max-width: 100%;
+}
+
+@media (max-width: 639px) {
+    .reveal-left, .reveal-right {
+        transform: translateY(28px);
+    }
+
+    .reveal, .reveal-left, .reveal-right, .reveal-scale {
+        transition-duration: 0.65s;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal, .reveal-left, .reveal-right, .reveal-scale {
+        transition-duration: 0.01ms !important;
+    }
+}
+

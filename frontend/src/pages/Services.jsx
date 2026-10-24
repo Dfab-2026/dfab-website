@@ -157,7 +157,7 @@ export default function Services() {
             ))}
           </div>
 
-          <div className="mt-16 bg-slate-50 border border-slate-200 rounded-md p-10 text-center">
+          <div className="mt-16 bg-slate-50 border border-slate-200 rounded-md p-6 sm:p-8 md:p-10 text-center">
             <h2 className="text-2xl font-bold text-slate-900 mb-3 font-['Chivo']">
               Need a Custom Solution?
             </h2>

@@ -232,7 +232,7 @@ export default function CinematicScrollSequence() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-[390vh] bg-[#05080d]"
+      className="relative h-[300svh] sm:h-[340svh] md:h-[390vh] bg-[#05080d]"
       aria-label="DFAB cinematic product scroll experience"
     >
       <div className="sticky top-0 h-screen overflow-hidden bg-[#05080d]">
@@ -284,7 +284,7 @@ export default function CinematicScrollSequence() {
             <div className="max-w-2xl">
               <div key={activeScene} className="transition-opacity duration-500">
                 <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.34em] text-[#59aef6] md:text-xs">{scene.eyebrow}</p>
-                <h2 className="font-['Chivo'] text-4xl font-black leading-[0.98] tracking-[-0.04em] text-white md:text-6xl lg:text-7xl">
+                <h2 className="font-['Chivo'] text-3xl sm:text-4xl font-black leading-[0.98] tracking-[-0.04em] text-white md:text-6xl lg:text-7xl">
                   {scene.title}
                 </h2>
                 <p className="mt-4 max-w-lg text-sm leading-6 text-white/62 md:text-base">{scene.copy}</p>

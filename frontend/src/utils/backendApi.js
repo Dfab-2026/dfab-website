@@ -47,10 +47,8 @@ function configuredBackendForCurrentBrowser() {
   const configured = normalizeBackendUrl(process.env.REACT_APP_BACKEND_URL);
   if (!configured) return "";
 
-  // A common local-development mistake is setting localhost in .env and then
-  // opening the React app through a LAN address such as 192.168.1.55:3000.
-  // In that case localhost points to the viewing device, not the development PC.
-  // Reuse the current LAN hostname and keep the configured backend port.
+  // If the React app is opened through a LAN IP while .env still points at
+  // localhost, reuse the viewing machine's LAN hostname with the same backend port.
   if (typeof window !== "undefined" && isPrivateIpv4(window.location.hostname)) {
     try {
       const parsed = new URL(configured);
@@ -70,8 +68,6 @@ export function getBackendUrl() {
   const configured = configuredBackendForCurrentBrowser();
 
   if (isLocalFrontend()) {
-    // Respect an explicit remote backend (for example Render). Otherwise use
-    // the same host as the local/LAN frontend with FastAPI on port 8000.
     return configured || localBackendFromBrowser();
   }
 
@@ -85,12 +81,13 @@ export function getApiBase() {
     return `${configured || localBackendFromBrowser()}/api`;
   }
 
-  // On Vercel, same-origin /api is rewritten to Render by vercel.json when no
-  // explicit backend URL is configured. This avoids browser CORS dependency in
-  // production while preserving a configured backend when supplied.
-  if (configured) return `${configured}/api`;
+  // Production is intentionally same-origin. Vercel rewrites /api/* to Render,
+  // which avoids browser CORS differences and keeps Projects, Blog, Chatbot,
+  // Analytics and Admin on one stable API path.
   if (typeof window !== "undefined") return "/api";
-  return `${DEFAULT_DEPLOYED_BACKEND_URL}/api`;
+
+  // Non-browser/SSR fallback only.
+  return `${configured || DEFAULT_DEPLOYED_BACKEND_URL}/api`;
 }
 
 export function getDirectApiBase() {

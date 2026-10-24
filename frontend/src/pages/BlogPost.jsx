@@ -18,23 +18,35 @@ export default function BlogPost() {
     setLoading(true);
     setPost(null);
 
-    axios
-      .get(`${API}/blog/posts/${id}`, {
-        headers: { Accept: "application/json", "Cache-Control": "no-cache" },
-        params: { _ts: Date.now() },
-      })
-      .then((r) => {
-        if (!cancelled) setPost(r.data);
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          console.error("Failed to load blog post from MongoDB:", err);
-          setPost(null);
+    const loadPost = async () => {
+      let lastError = null;
+
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        try {
+          const response = await axios.get(`${API}/blog/posts/${id}`, {
+            headers: { Accept: "application/json", "Cache-Control": "no-cache" },
+            params: { _ts: Date.now() },
+            timeout: 75000,
+          });
+          if (!cancelled) setPost(response.data);
+          return;
+        } catch (err) {
+          lastError = err;
+          if (attempt === 0) {
+            await new Promise((resolve) => window.setTimeout(resolve, 1500));
+          }
         }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+      }
+
+      if (!cancelled) {
+        console.error("Failed to load blog post from MongoDB:", lastError);
+        setPost(null);
+      }
+    };
+
+    loadPost().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
 
     return () => {
       cancelled = true;
@@ -168,7 +180,7 @@ export default function BlogPost() {
           {/* FIXED IDLE BOX WITH INTERNAL SCROLL */}
           <div className="border border-slate-200 rounded-2xl bg-slate-50 p-2 shadow-xl">
             <div
-              className="h-[700px] overflow-y-auto p-6 md:p-12 bg-white rounded-xl custom-scrollbar prose prose-slate max-w-none text-slate-700 leading-relaxed whitespace-pre-wrap"
+              className="max-h-none md:h-[700px] md:overflow-y-auto p-5 sm:p-6 md:p-12 bg-white rounded-xl custom-scrollbar prose prose-slate max-w-none text-slate-700 leading-relaxed whitespace-pre-wrap"
               style={{ textAlign: 'justify' }}
             >
               {post.content}
@@ -188,7 +200,7 @@ export default function BlogPost() {
           )}
 
           {/* Final Call to Action */}
-          <div className="mt-12 text-center bg-[#0F172A] rounded-2xl p-10 text-white">
+          <div className="mt-12 text-center bg-[#0F172A] rounded-2xl p-6 sm:p-8 md:p-10 text-white">
             <h3 className="text-2xl font-bold mb-3 font-['Chivo'] tracking-tight">
               Ready to Start Your Project?
             </h3>

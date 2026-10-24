@@ -138,7 +138,7 @@ export default function Careers() {
       </div>
 
       {/* HEADER SECTION - Standardized */}
-      <div className="bg-[#0F172A] h-[260px] flex items-center px-4">
+      <div className="bg-[#0F172A] min-h-[240px] sm:min-h-[260px] flex items-center px-4 py-8">
         <div className="max-w-7xl mx-auto w-full">
           <span className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wider">Join Our Team</span>
           <h1 className="text-4xl md:text-5xl font-bold text-white mt-2 font-['Chivo']">Careers at DFAB</h1>
@@ -197,7 +197,7 @@ export default function Careers() {
           </div>
 
           {!loadingJobs && openings.length === 0 ? (
-            <div className="bg-slate-50 border border-slate-200 rounded-md p-10 text-center reveal">
+            <div className="bg-slate-50 border border-slate-200 rounded-md p-6 sm:p-8 md:p-10 text-center reveal">
               <h3 className="text-xl font-bold text-slate-900 mb-3 font-['Chivo']">No openings right now</h3>
               <p className="text-slate-600 mb-6 max-w-lg mx-auto text-sm">
                 There are currently no active positions. You can still send your CV and we will contact you when a suitable role opens.
