@@ -128,20 +128,16 @@ export default function Projects() {
             </div>
           </div>
 
-          {/* SPACING BETWEEN PROJECTS HEADER AND VIDEO */}
+          {/* SPACING BETWEEN PROJECTS HEADER AND PRODUCT VISUAL */}
           <div className="h-10 md:h-14 lg:h-16 bg-white" aria-hidden="true" />
 
-          {/* STATIC PRODUCT VISUAL - temporary replacement for the video area */}
-          <section className="bg-[#07111f] py-6 sm:py-8 md:py-10">
-            <div className="max-w-7xl mx-auto px-4 md:px-8">
-              <div className="relative overflow-hidden rounded-2xl border border-slate-700/60 bg-slate-950 shadow-2xl">
-                <img
-                  src={projectProductPlaceholder}
-                  alt="DFAB fabricated stainless steel product"
-                  className="block w-full max-h-[72vh] object-contain object-center bg-black"
-                />
-              </div>
-            </div>
+          {/* STATIC PRODUCT VISUAL - full-width replacement for the video area */}
+          <section className="w-full overflow-hidden bg-black">
+            <img
+              src={projectProductPlaceholder}
+              alt="DFAB fabricated stainless steel product"
+              className="block h-auto w-full object-contain object-center"
+            />
           </section>
 
           {/* PROJECTS GRID */}
