@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle, Award, Linkedin, Mail, Settings } from "lucide-react";
+import {
+  BadgeCheck,
+  CheckCircle,
+  Compass,
+  Crosshair,
+  Linkedin,
+  Mail,
+  Settings,
+} from "lucide-react";
 import { useReveal } from "../hooks/useReveal";
 import factoryImg from "../assets/images/abtfac.jpg";
 import jithedraImg from "../assets/images/leaders/Jithendra.jpg";
@@ -208,38 +216,101 @@ export default function About() {
           </div>
 
           {/* Vision, Mission, Quality Policy */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20" ref={vmqRef}>
+          <div
+            className="grid auto-rows-fr grid-cols-1 gap-5 md:grid-cols-3 md:gap-6 mb-20"
+            ref={vmqRef}
+          >
             {[
               {
                 title: "Vision",
-                icon: <Award size={28} />,
-                text: "To be the one-stop solution provider for all fabrication needs across domains by 2030.",
+                icon: <Compass size={21} strokeWidth={1.8} />,
+                text: [
+                  "To be a one-stop solution",
+                  "for fabrication across domains,",
+                  "delivering trusted quality and",
+                  "value to every customer by 2030.",
+                ],
+                accent: "blue",
               },
               {
                 title: "Mission",
-                icon: <CheckCircle size={28} />,
-                text: "To be the partner for fabricating thoughts of our customers in supporting the development of world-class products and processes with assured quality, time & cost.",
+                icon: <Crosshair size={21} strokeWidth={1.8} />,
+                text: [
+                  "Turn customer ideas into",
+                  "world-class products through",
+                  "reliable fabrication and",
+                  "assured quality, time, and cost.",
+                ],
+                accent: "amber",
               },
               {
                 title: "Quality Policy",
-                icon: <Award size={28} />,
-                text: "We are committed to manufacturing and supplying consistently high-quality machined components and fabricated items on time, meeting customer expectations and ensuring continuous improvement.",
+                icon: <BadgeCheck size={21} strokeWidth={1.8} />,
+                text: [
+                  "Deliver machined and fabricated",
+                  "products that meet customer",
+                  "expectations, arrive on time,",
+                  "and improve continuously.",
+                ],
+                accent: "emerald",
               },
             ].map((item, i) => (
               <div
                 key={item.title}
-                className={`reveal bg-slate-50 border border-slate-200 rounded-md p-8 hover:border-[#0A66C2] transition-colors delay-${(i + 1) * 100}`}
+                className={`group relative flex h-full min-h-[360px] flex-col overflow-hidden rounded-lg border border-slate-200 bg-white p-6 shadow-[0_3px_14px_rgba(15,23,42,0.04)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_34px_rgba(15,23,42,0.12)] sm:p-7 ${
+                  item.accent === "blue"
+                    ? "before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-[#0A66C2] hover:border-blue-200"
+                    : item.accent === "amber"
+                    ? "before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-amber-500 hover:border-amber-200"
+                    : "before:absolute before:inset-x-0 before:top-0 before:h-1 before:bg-emerald-600 hover:border-emerald-200"
+                }`}
                 data-testid={`about-${item.title.toLowerCase()}-card`}
               >
-                <div className="w-14 h-14 bg-blue-50 rounded-md flex items-center justify-center text-[#0A66C2] mb-5">
-                  {item.icon}
+                <div className="relative mb-6 flex justify-center">
+                  <span
+                    className={`flex h-11 w-11 items-center justify-center rounded-md transition-transform duration-300 group-hover:rotate-[-6deg] group-hover:scale-110 ${
+                      item.accent === "blue"
+                        ? "bg-blue-50 text-[#0A66C2]"
+                        : item.accent === "amber"
+                        ? "bg-amber-50 text-amber-700"
+                        : "bg-emerald-50 text-emerald-700"
+                    }`}
+                  >
+                    {item.icon}
+                  </span>
+                  <span className="absolute right-0 top-1 font-mono text-xs tracking-wider text-slate-400">
+                    0{i + 1}
+                  </span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3 font-['Chivo']">
-                  {item.title}
-                </h3>
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  {item.text}
-                </p>
+                <div className="flex flex-1 flex-col items-center justify-center text-center">
+                  <h3 className="mb-3 flex min-h-[3.5rem] items-center justify-center text-xl font-bold leading-tight text-slate-900 font-['Chivo']">
+                    {item.title}
+                  </h3>
+                  <p className="font-['Inter'] text-sm leading-7 text-slate-600">
+                    {item.text.map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))}
+                  </p>
+                  {item.detail && (
+                    <p className="mt-3 font-['Inter'] text-sm leading-6 text-slate-500">
+                      {item.detail}
+                    </p>
+                  )}
+                </div>
+                <div className="mt-auto pt-6">
+                  <div className="h-px w-full bg-slate-100" />
+                  <div
+                    className={`mt-4 h-1 w-8 rounded-full transition-all duration-300 group-hover:w-14 ${
+                      item.accent === "blue"
+                        ? "bg-[#0A66C2]/70"
+                        : item.accent === "amber"
+                        ? "bg-amber-500/80"
+                        : "bg-emerald-600/75"
+                    }`}
+                  />
+                </div>
               </div>
             ))}
           </div>

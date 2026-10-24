@@ -128,8 +128,8 @@ export default function Contact() {
                           Visit Us
                         </h4>
                         <p className="text-slate-600 text-sm mt-1 leading-relaxed">
-                          No: 3B/415, KIADB Main Road, Peenya Industrial Area,
-                          Bengaluru – 560058
+                          No: 3B/415, No-8 KIADB Main Road, 1st Stage, 2nd
+                          Phase, Peenya Industrial Area, Bengaluru – 560058
                         </p>
                       </div>
                     </div>
@@ -360,7 +360,9 @@ export default function Contact() {
               </h2>
 
               <p className="text-slate-600 mt-3 max-w-2xl mx-auto">
-                DFAB Stainless System Pvt Ltd, Peenya Industrial Area, Bengaluru
+                DFAB Stainless System Pvt Ltd, No: 3B/415, No-8 KIADB Main
+                Road, 1st Stage, 2nd Phase, Peenya Industrial Area, Bengaluru
+                – 560058
               </p>
             </div>
 

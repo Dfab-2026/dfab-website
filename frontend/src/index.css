@@ -17,6 +17,8 @@ body {
 
 html {
     scroll-behavior: auto;
+    overflow-x: hidden;
+    overflow-x: clip;
 }
 
 code {
@@ -648,4 +650,3 @@ input, select, textarea, button {
         transition-duration: 0.01ms !important;
     }
 }
-
