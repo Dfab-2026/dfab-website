@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, Settings, Target, RefreshCw } from "lucide-react";
 import { SERVICES as ALL_SERVICES } from "./Services";
-import projectProductPlaceholder from "../assets/images/project-product-placeholder.webp";
 import { fetchPublishedProjects } from "../utils/projectsApi";
 
 export default function Projects() {
@@ -127,18 +126,6 @@ export default function Projects() {
               </div>
             </div>
           </div>
-
-          {/* SPACING BETWEEN PROJECTS HEADER AND PRODUCT VISUAL */}
-          <div className="h-10 md:h-14 lg:h-16 bg-white" aria-hidden="true" />
-
-          {/* STATIC PRODUCT VISUAL - full-width replacement for the video area */}
-          <section className="w-full overflow-hidden bg-black">
-            <img
-              src={projectProductPlaceholder}
-              alt="DFAB fabricated stainless steel product"
-              className="block h-auto w-full object-contain object-center"
-            />
-          </section>
 
           {/* PROJECTS GRID */}
           <section id="projects-section" className="py-16 md:py-24 bg-white">

@@ -20,6 +20,21 @@ const CERTIFICATIONS = [
     icon: <Award size={32} />,
   },
   {
+    id: "iso-3834",
+    badge: "ISO 3834",
+    full: "EN ISO 3834-2:2021",
+    title: "Welding Quality Requirements",
+    desc: "DFAB is certified to EN ISO 3834-2:2021, demonstrating comprehensive quality controls for fusion welding of metallic materials and consistent fabrication quality.",
+    points: [
+      "Documented welding procedures and process controls",
+      "Qualified welding coordination and personnel",
+      "Material traceability, inspection, and testing",
+      "Quality requirements covering the complete welding process",
+    ],
+    color: "bg-blue-50 text-[#0A66C2] border-blue-200",
+    icon: <Award size={32} />,
+  },
+  {
     id: "zed",
     badge: "ZED",
     full: "Zero Defect Zero Effect",
@@ -117,7 +132,9 @@ Every product leaving our facility meets stringent quality standards. Our commit
               >
                 <div className="flex items-start gap-5 mb-6">
                   <div className={`w-20 h-16 border rounded-md flex flex-col items-center justify-center shrink-0 ${cert.color}`}>
-                    <span className="font-black text-lg font-['Chivo'] leading-tight">{cert.badge}</span>
+                    <span className="flex h-full w-full items-center justify-center px-1 text-center font-black text-lg font-['Chivo'] leading-tight">
+                      {cert.id === "iso-3834" ? <>ISO<br />3834</> : cert.badge}
+                    </span>
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-[#0A66C2] uppercase tracking-wide">{cert.full}</p>
